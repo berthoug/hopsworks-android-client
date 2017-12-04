@@ -1,0 +1,24 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+
+    package="io.hops.android.streams">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <application android:allowBackup="true" android:label= "@string/app_name"
+        android:supportsRtl="true">
+        <receiver
+            android:name="io.hops.android.streams.time.TimerSyncReceiver"
+            android:enabled="false">
+        </receiver>
+        <receiver android:name="io.hops.android.streams.time.BootCompletedBroadcastReceiver"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="io.hops.android.streams.time.TimerSyncService"
+            android:exported="false" />
+    </application>
+</manifest>

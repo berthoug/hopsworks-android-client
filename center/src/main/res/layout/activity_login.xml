@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="io.hops.android.center.MainActivity">
+
+    <Button
+        android:id="@+id/btnSchema"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:background="@color/colorOk"
+        android:onClick="getSchema"
+        android:text="Get Schema"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnRegister"
+        app:layout_constraintRight_toLeftOf="@+id/btnProduce"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:onClick="login"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:text="Login"
+        android:background="@color/colorOk"
+        app:layout_constraintRight_toLeftOf="@+id/btnVerify"
+        app:layout_constraintLeft_toRightOf="@+id/btnSchema"
+        app:layout_constraintTop_toBottomOf="@+id/txtDisplay"
+        app:layout_constraintBottom_toTopOf="@+id/btnProduceInBackground" />
+
+    <Button
+        android:id="@+id/btnVerify"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:background="@color/colorOk"
+        android:onClick="verify"
+        android:text="Verify token"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/btnLogin"
+        app:layout_constraintTop_toBottomOf="@+id/txtDisplay"
+        app:layout_constraintBottom_toTopOf="@+id/btnProduceInBackground" />
+
+    <Button
+        android:id="@+id/btnRegister"
+        android:onClick="register"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:text="Register"
+        android:background="@color/colorOk"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/btnLogin"
+        app:layout_constraintTop_toBottomOf="@+id/txtDisplay"
+        app:layout_constraintBottom_toTopOf="@+id/btnProduceInBackground" />
+
+    <TextView
+        android:id="@+id/lblAlias"
+        android:layout_width="120dp"
+        android:layout_height="20dp"
+        android:text="Alias:"
+        android:textColor="@color/colorBlack"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/txtAlias"
+        app:layout_constraintLeft_toRightOf="@+id/lblProjectName"
+        app:layout_constraintRight_toLeftOf="@+id/lblTopicName" />
+
+    <TextView
+        android:id="@+id/lblProjectName"
+        android:layout_width="80dp"
+        android:layout_height="20dp"
+        android:text="Proj Name:"
+        android:textColor="@color/colorBlack"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/lblAlias"
+        app:layout_constraintBottom_toTopOf="@+id/txtProjectName" />
+
+    <TextView
+        android:id="@+id/lblToken"
+        android:layout_width="300dp"
+        android:layout_height="20dp"
+        android:text="Token:"
+        android:textColor="@color/colorBlack"
+        app:layout_constraintBottom_toTopOf="@+id/txtToken"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtAlias"
+        app:layout_constraintVertical_bias="0.41" />
+
+    <TextView
+        android:id="@+id/txtToken"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:text="No JWT"
+        android:textIsSelectable="true"
+        android:textColor="@color/colorWhite"
+        android:background="@color/colorBlack"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/lblDisplay"
+        app:layout_constraintTop_toBottomOf="@+id/lblToken" />
+
+    <EditText
+        android:id="@+id/txtAlias"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Filotas"
+        app:layout_constraintLeft_toRightOf="@+id/txtProjectName"
+        app:layout_constraintTop_toBottomOf="@+id/lblAlias"
+        android:layout_marginTop="10dp"
+        app:layout_constraintRight_toLeftOf="@+id/txtTopicName" />
+
+    <EditText
+        android:id="@+id/txtProjectName"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="intrabody"
+        app:layout_constraintRight_toLeftOf="@+id/txtAlias"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblProjectName"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:id="@+id/lblDisplay"
+        android:layout_width="300dp"
+        android:layout_height="20dp"
+        android:textColor="@color/colorBlack"
+        android:text="Display:"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/txtDisplay"
+        app:layout_constraintTop_toBottomOf="@+id/txtToken" />
+
+    <TextView
+        android:id="@+id/txtDisplay"
+        android:layout_width="300dp"
+        android:layout_height="180dp"
+        android:text=""
+        android:maxLines = "300"
+        android:scrollbars = "vertical"
+        android:textColor="@color/colorWhite"
+        android:background="@color/colorBlack"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+        app:layout_constraintTop_toBottomOf="@+id/lblDisplay"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <Button
+        android:id="@+id/btnProduceInBackground"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:background="@color/colorOk"
+        android:onClick="produceInBackground"
+        android:text="Produce Thread"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnVerify"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/btnProduce" />
+
+    <Button
+        android:id="@+id/btnProduce"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:background="@color/colorOk"
+        android:onClick="produce"
+        android:text="Produce"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnLogin"
+        app:layout_constraintRight_toLeftOf="@+id/btnProduceInBackground"
+        app:layout_constraintLeft_toRightOf="@+id/btnSchema" />
+
+    <TextView
+        android:id="@+id/lblTopicName"
+        android:layout_width="80dp"
+        android:layout_height="20dp"
+        android:textColor="@color/colorBlack"
+        android:text="Topic Name:"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/lblAlias"
+        app:layout_constraintBottom_toTopOf="@+id/txtTopicName"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/txtTopicName"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Galileo"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/txtAlias"
+        app:layout_constraintBottom_toTopOf="@+id/lblToken"
+        app:layout_constraintTop_toBottomOf="@+id/lblTopicName" />
+
+</android.support.constraint.ConstraintLayout>
+
