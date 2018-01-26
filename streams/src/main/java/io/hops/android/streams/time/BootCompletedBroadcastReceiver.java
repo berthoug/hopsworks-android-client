@@ -12,10 +12,7 @@ public class BootCompletedBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-            //Intent pushIntent = new Intent(context, BackgroundService.class);
-            //context.startService(pushIntent);
             //TODO: Consider moving the code below to a Background Service
-
             SQLite.init(context);
             try {
                 Timer.getInstance().rebootHappened();

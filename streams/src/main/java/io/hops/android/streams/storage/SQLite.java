@@ -35,9 +35,7 @@ public class SQLite extends SQLiteOpenHelper{
             }
             if (sqLite==null){
                 throw new SQLiteNotInitialized(
-                        "You need to call SQLite.init(context) " +
-                                "before any other call to the android-streams library " +
-                                "is executed. Like on your Activity's onCreate() method.");
+                        "You need to initialize SQLite before using it by SQLite.init(context)");
             }
         }
         return sqLite;

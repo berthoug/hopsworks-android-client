@@ -53,76 +53,27 @@
         app:layout_constraintTop_toBottomOf="@+id/txtDisplay"
         app:layout_constraintBottom_toTopOf="@+id/btnProduceInBackground" />
 
-    <TextView
-        android:id="@+id/lblAlias"
-        android:layout_width="120dp"
-        android:layout_height="20dp"
-        android:text="Alias:"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/txtAlias"
-        app:layout_constraintLeft_toRightOf="@+id/lblProjectName"
-        app:layout_constraintRight_toLeftOf="@+id/lblTopicName" />
-
-    <TextView
-        android:id="@+id/lblProjectName"
-        android:layout_width="80dp"
-        android:layout_height="20dp"
-        android:text="Proj Name:"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/lblAlias"
-        app:layout_constraintBottom_toTopOf="@+id/txtProjectName" />
-
-    <TextView
-        android:id="@+id/lblToken"
-        android:layout_width="300dp"
-        android:layout_height="20dp"
-        android:text="Token:"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintBottom_toTopOf="@+id/txtToken"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtAlias"
-        app:layout_constraintVertical_bias="0.41" />
-
-    <TextView
-        android:id="@+id/txtToken"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:text="No JWT"
-        android:textIsSelectable="true"
-        android:textColor="@color/colorWhite"
-        android:background="@color/colorBlack"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/lblDisplay"
-        app:layout_constraintTop_toBottomOf="@+id/lblToken" />
-
     <EditText
         android:id="@+id/txtAlias"
-        android:layout_width="120dp"
-        android:layout_height="50dp"
+        android:layout_width="96dp"
+        android:layout_height="45dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Filotas"
+        tools:layout_editor_absoluteY="81dp"
         app:layout_constraintLeft_toRightOf="@+id/txtProjectName"
-        app:layout_constraintTop_toBottomOf="@+id/lblAlias"
-        android:layout_marginTop="10dp"
-        app:layout_constraintRight_toLeftOf="@+id/txtTopicName" />
+        android:layout_marginLeft="25dp" />
 
     <EditText
         android:id="@+id/txtProjectName"
-        android:layout_width="80dp"
-        android:layout_height="50dp"
+        android:layout_width="103dp"
+        android:layout_height="45dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="intrabody"
-        app:layout_constraintRight_toLeftOf="@+id/txtAlias"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblProjectName"
-        android:layout_marginTop="10dp" />
+        app:layout_constraintHorizontal_chainStyle="spread"
+        tools:layout_editor_absoluteY="81dp"
+        tools:layout_editor_absoluteX="16dp" />
 
     <TextView
         android:id="@+id/lblDisplay"
@@ -133,29 +84,34 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/txtDisplay"
-        app:layout_constraintTop_toBottomOf="@+id/txtToken" />
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintVertical_bias="0.36"
+        app:layout_constraintTop_toBottomOf="@+id/txtAlias" />
 
     <TextView
         android:id="@+id/txtDisplay"
-        android:layout_width="300dp"
-        android:layout_height="180dp"
+        android:layout_width="294dp"
+        android:layout_height="100dp"
         android:text=""
         android:maxLines = "300"
         android:scrollbars = "vertical"
         android:textColor="@color/colorWhite"
         android:background="@color/colorBlack"
         app:layout_constraintBottom_toTopOf="@+id/btnLogin"
-        app:layout_constraintTop_toBottomOf="@+id/lblDisplay"
+        app:layout_constraintTop_toBottomOf="@+id/txtAlias"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="8dp"
+        tools:layout_editor_absoluteY="203dp" />
 
     <Button
         android:id="@+id/btnProduceInBackground"
         android:layout_width="80dp"
         android:layout_height="50dp"
         android:background="@color/colorOk"
-        android:onClick="produceInBackground"
-        android:text="Produce Thread"
+        android:onClick="Background"
+        android:text="Stream thread"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnVerify"
         app:layout_constraintRight_toRightOf="parent"
@@ -173,30 +129,16 @@
         app:layout_constraintRight_toLeftOf="@+id/btnProduceInBackground"
         app:layout_constraintLeft_toRightOf="@+id/btnSchema" />
 
-    <TextView
-        android:id="@+id/lblTopicName"
-        android:layout_width="80dp"
-        android:layout_height="20dp"
-        android:textColor="@color/colorBlack"
-        android:text="Topic Name:"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/lblAlias"
-        app:layout_constraintBottom_toTopOf="@+id/txtTopicName"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        android:layout_marginBottom="8dp" />
-
     <EditText
         android:id="@+id/txtTopicName"
-        android:layout_width="120dp"
-        android:layout_height="50dp"
+        android:layout_width="95dp"
+        android:layout_height="44dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Galileo"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/txtAlias"
-        app:layout_constraintBottom_toTopOf="@+id/lblToken"
-        app:layout_constraintTop_toBottomOf="@+id/lblTopicName" />
+        tools:layout_editor_absoluteY="81dp"
+        android:layout_marginLeft="25dp" />
 
 </android.support.constraint.ConstraintLayout>
 

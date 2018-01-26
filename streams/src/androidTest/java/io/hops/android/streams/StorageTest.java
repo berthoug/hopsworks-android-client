@@ -7,6 +7,7 @@ import android.support.test.runner.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import io.hops.android.streams.records.AvroTemplate;
 import io.hops.android.streams.records.CoordinatesRecord;
 import io.hops.android.streams.storage.PropertiesTable;
 import io.hops.android.streams.storage.RecordsTable;
@@ -54,6 +55,7 @@ public class StorageTest {
         SQLite.init(appContext);
 
         CoordinatesRecord record = new CoordinatesRecord(59.3315, 18.0715);
+        String x = AvroTemplate.getSchema(new CoordinatesRecord(1.23, 2.42));
         assertEquals(record.save(), true);
 
         CoordinatesRecord retrievedRecord = (CoordinatesRecord) RecordsTable.read(

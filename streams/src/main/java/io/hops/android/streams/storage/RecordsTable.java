@@ -115,8 +115,6 @@ public class RecordsTable extends Table{
         return null;
     }
 
-    //------------------------ MULTI RECORD OPS --------------------------------------------------
-
     public static ArrayList<Record> readRecords(
             Class<? extends Record> type, String selection, String[] selectionArgs,
             String orderBy, String limit) throws SQLiteNotInitialized {

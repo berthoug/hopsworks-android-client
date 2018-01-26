@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "io.hops.android.center"
-        minSdkVersion 20
+        minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -27,7 +27,6 @@ android {
             debuggable true
         }
     }
-
 
     dependencies {
         compile project(':streams')
