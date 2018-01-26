@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import io.hops.android.streams.records.Record;
 
 
-public class RecordStream {
+public class RecordStreamWorker {
 
     private final String name;
     private final Class<? extends Record> recordType;
@@ -24,9 +24,9 @@ public class RecordStream {
 
 
     private static final Object lock = new Object();
-    private static Map<String, RecordStream> streams = new HashMap<>();
+    private static Map<String, RecordStreamWorker> streams = new HashMap<>();
 
-    public static RecordStream getInstance(Class<? extends Record> recordClass) {
+    public static RecordStreamWorker getInstance(Class<? extends Record> recordClass) {
         if (recordClass == null){
             return null;
         }
@@ -37,7 +37,7 @@ public class RecordStream {
                 if (streams.get(name) == null) {
                     synchronized (lock) {
                         if (streams.get(name) == null) {
-                            streams.put(name, new RecordStream(recordClass));
+                            streams.put(name, new RecordStreamWorker(recordClass));
                         }
                     }
                 }
@@ -46,7 +46,7 @@ public class RecordStream {
         return streams.get(name);
     }
 
-    private RecordStream(Class<? extends Record> recordType){
+    private RecordStreamWorker(Class<? extends Record> recordType){
         this.recordType = recordType;
         this.name = recordType.getName();
         this.worker = Executors.newSingleThreadScheduledExecutor();
@@ -95,7 +95,7 @@ public class RecordStream {
     }
 
     public void clean(){
-        this.clean(new StreamCleanTask(recordType), 0, 10, TimeUnit.MINUTES);
+        this.clean(new CleanTask(recordType), 0, 10, TimeUnit.MINUTES);
     }
 
 
@@ -107,7 +107,7 @@ public class RecordStream {
 
     public void timeSync(){
         this.timeSync(
-                new StreamTimeSyncTask(recordType), 0, 1, TimeUnit.HOURS);
+                new TimeSyncTask(recordType), 0, 1, TimeUnit.HOURS);
     }
 
     public void stopProducing(){
@@ -146,7 +146,7 @@ public class RecordStream {
     }
 
     public static void closeStream(Class<? extends Record> cls){
-        RecordStream.getInstance(cls).close();
+        RecordStreamWorker.getInstance(cls).close();
     }
 
     public static void printNumOfThreadsToConsole(){

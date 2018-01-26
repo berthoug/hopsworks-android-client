@@ -6,9 +6,9 @@ import com.google.gson.Gson;
 
 import java.util.UUID;
 
-import io.hops.android.streams.properties.DeviceUUID;
-import io.hops.android.streams.storage.Storage;
-import io.hops.android.streams.storage.StorageNotInitialized;
+import io.hops.android.streams.storage.DeviceCredentials;
+import io.hops.android.streams.storage.RecordsTable;
+import io.hops.android.streams.storage.SQLiteNotInitialized;
 import io.hops.android.streams.time.Timer;
 import io.hops.android.streams.time.Timestamp;
 
@@ -32,9 +32,9 @@ public abstract class Record implements Comparable<Record>{
     private String deviceUUID;
 
 
-    public Record() throws StorageNotInitialized {
+    public Record() throws SQLiteNotInitialized {
         Timestamp timestamp = Timer.getInstance().getTimestamp();
-        this.deviceUUID = DeviceUUID.getValue();
+        this.deviceUUID = DeviceCredentials.getDeviceUUID();
         this.bootNum = timestamp.getBootNum();
         this.bootMillis = timestamp.getBootMillis();
         this.epochMillis = timestamp.getEpochMillis();
@@ -54,12 +54,19 @@ public abstract class Record implements Comparable<Record>{
         return recordUUID;
     }
 
-    public long getAcked() {
-        return acked;
+    public boolean getAcked() {
+        if (acked > 0){
+            return true;
+        }
+        return false;
     }
 
-    public void setAcked(long acked) {
-        this.acked = acked;
+    public void setAcked(boolean acked) {
+        if (acked){
+            this.acked = 1;
+        }else{
+            this.acked = 0;
+        }
     }
 
     public long getBootNum() {
@@ -86,8 +93,12 @@ public abstract class Record implements Comparable<Record>{
         return new Gson().fromJson(json, type);
     }
 
-    public boolean save() throws StorageNotInitialized{
-        return Storage.getInstance().saveRecord(this);
+    public boolean save() throws SQLiteNotInitialized {
+        return RecordsTable.write(this);
+    }
+
+    public boolean delete() throws SQLiteNotInitialized {
+        return RecordsTable.delete(this.recordUUID);
     }
 
     public Timestamp getTimestamp(){

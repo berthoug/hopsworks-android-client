@@ -1,9 +1,8 @@
 package io.hops.android.streams.time;
 
 import android.os.SystemClock;
-
-import io.hops.android.streams.storage.Storage;
-import io.hops.android.streams.storage.StorageNotInitialized;
+import io.hops.android.streams.storage.SQLiteNotInitialized;
+import io.hops.android.streams.storage.TimestampsTable;
 
 public class Timer{
 
@@ -13,15 +12,15 @@ public class Timer{
 
     private Timer(){}
 
-    public static Timer getInstance() throws StorageNotInitialized {
+    public static Timer getInstance() throws SQLiteNotInitialized {
         if (timer == null) {
             synchronized (lock) {
                 if (timer == null) {
                     timer = new Timer();
-                    referenceTimestamp = Storage.getInstance().loadMaxBootNumTimestamp();
+                    referenceTimestamp = TimestampsTable.loadMaxBootNumTimestamp();
                     if(referenceTimestamp == null){
                         referenceTimestamp = new Timestamp(0, SystemClock.elapsedRealtime(), -1L);
-                        Storage.getInstance().saveTimestamp(referenceTimestamp);
+                        TimestampsTable.write(referenceTimestamp);
                     }
                 }
             }
@@ -29,16 +28,16 @@ public class Timer{
         return timer;
     }
 
-     void rebootHappened() throws StorageNotInitialized {
+     void rebootHappened() throws SQLiteNotInitialized {
         long bootMillis = SystemClock.elapsedRealtime();
         synchronized (lock){
             referenceTimestamp = new Timestamp(referenceTimestamp.getBootNum()+1, bootMillis, -1L);
-            Storage.getInstance().saveTimestamp(referenceTimestamp);
+            TimestampsTable.write(referenceTimestamp);
         }
 
     }
 
-    public boolean sync(String host, int timeout) throws StorageNotInitialized {
+    public boolean sync(String host, int timeout) throws SQLiteNotInitialized {
         SntpClient client = new SntpClient();
         if (client.requestTime(host, timeout)) {
             long bootMillisNow = SystemClock.elapsedRealtime();
@@ -48,7 +47,7 @@ public class Timer{
             synchronized(lock){
                 referenceTimestamp = new Timestamp(
                         referenceTimestamp.getBootNum(), bootMillisNow, epochMillisNow);
-                Storage.getInstance().saveTimestamp(referenceTimestamp);
+                TimestampsTable.write(referenceTimestamp);
             }
             return true;
         }

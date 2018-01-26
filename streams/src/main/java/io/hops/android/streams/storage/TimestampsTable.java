@@ -25,28 +25,27 @@ public class TimestampsTable extends Table{
         return columns;
     }
 
-    public static boolean insert(
-            SQLiteDatabase db, Timestamp timestamp){
+    public static boolean insert(Timestamp timestamp) throws SQLiteNotInitialized {
+        SQLiteDatabase db = SQLite.getInstance().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(BOOT_NUM.name, timestamp.getBootNum());
         values.put(BOOT_MILLIS.name, timestamp.getBootMillis());
         values.put(EPOCH_MILLIS.name, timestamp.getEpochMillis());
-
         return (db.insert(TABLE_NAME, null, values) != -1);
     }
 
-    public static boolean update(SQLiteDatabase db, Timestamp timestamp){
+    public static boolean update(Timestamp timestamp) throws SQLiteNotInitialized {
+        SQLiteDatabase db = SQLite.getInstance().getWritableDatabase();
         String whereClause = BOOT_NUM.name + "= ?";
         String[] whereArgs = new String[] { String.valueOf(timestamp.getBootNum())};
-
         ContentValues newValues = new ContentValues();
         newValues.put(BOOT_MILLIS.name, timestamp.getBootMillis());
         newValues.put(EPOCH_MILLIS.name, timestamp.getEpochMillis());
-
         return (db.update(TABLE_NAME, newValues, whereClause, whereArgs) > 0);
     }
 
-    public static Timestamp read(SQLiteDatabase db, long bootNum){
+    public static Timestamp read(long bootNum) throws SQLiteNotInitialized {
+        SQLiteDatabase db = SQLite.getInstance().getReadableDatabase();
         Cursor cursor = null;
         try{
             String[] columns = {BOOT_NUM.name, BOOT_MILLIS.name, EPOCH_MILLIS.name};
@@ -72,17 +71,19 @@ public class TimestampsTable extends Table{
         return null;
     }
 
-    public static boolean write(SQLiteDatabase db, Timestamp timestamp){
-        return update(db, timestamp) || insert(db, timestamp);
+    public static boolean write(Timestamp timestamp) throws SQLiteNotInitialized {
+        return update(timestamp) || insert(timestamp);
     }
 
-    public static boolean delete(SQLiteDatabase db, long bootNum){
+    public static boolean delete(long bootNum) throws SQLiteNotInitialized {
+        SQLiteDatabase db = SQLite.getInstance().getWritableDatabase();
         String whereClause = BOOT_NUM.name + "= ?";
         String[] whereArgs = new String[] { String.valueOf(bootNum) };
         return (db.delete(TABLE_NAME, whereClause, whereArgs) > 0);
     }
 
-    public static Timestamp loadMaxBootNumTimestamp(SQLiteDatabase db){
+    public static Timestamp loadMaxBootNumTimestamp() throws SQLiteNotInitialized {
+        SQLiteDatabase db = SQLite.getInstance().getReadableDatabase();
         Cursor cursor = null;
         try{
             String[] columns = {"MAX("+BOOT_NUM.name+")"};
@@ -90,7 +91,7 @@ public class TimestampsTable extends Table{
                     TABLE_NAME, columns, null, null, null, null, null, null);
             if (cursor.moveToFirst()){
                 long bootNum = cursor.getLong(cursor.getColumnIndex(columns[0]));
-                return read(db, bootNum);
+                return read(bootNum);
             }
         }catch(Exception e){
             e.printStackTrace();

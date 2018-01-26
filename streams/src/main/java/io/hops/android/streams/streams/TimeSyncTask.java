@@ -3,18 +3,17 @@ package io.hops.android.streams.streams;
 
 import java.util.ArrayList;
 
-import io.hops.android.streams.records.CoordinatesRecord;
 import io.hops.android.streams.records.Record;
-import io.hops.android.streams.storage.Storage;
-import io.hops.android.streams.storage.StorageNotInitialized;
+import io.hops.android.streams.storage.RecordsTable;
+import io.hops.android.streams.storage.SQLiteNotInitialized;
 import io.hops.android.streams.time.Timer;
 import io.hops.android.streams.time.Timestamp;
 
-public class StreamTimeSyncTask implements Runnable{
+public class TimeSyncTask implements Runnable{
 
     private Class<? extends Record> cls;
 
-    public StreamTimeSyncTask(Class<? extends Record> cls){
+    public TimeSyncTask(Class<? extends Record> cls){
         this.cls = cls;
     }
 
@@ -22,12 +21,10 @@ public class StreamTimeSyncTask implements Runnable{
     public void run() {
         try {
             Timer timer = Timer.getInstance();
-            Storage storage = Storage.getInstance();
             if (timer.sync("pool.ntp.org", 5000)) {
                 Timestamp tRef= timer.getClonedReferenceTimestamp();
-                ArrayList<Record> records = storage.loadRecordsSinceBootWithoutEpoch(
-                        cls,
-                        tRef.getBootNum());
+                ArrayList<Record> records =
+                        RecordsTable.readAllSinceRebootWithoutEpoch(cls, tRef.getBootNum());
                 for (Record record : records){
                     Timestamp tRec = record.getTimestamp();
                     if (tRef.getBootNum() == tRec.getBootNum()){
@@ -38,8 +35,8 @@ public class StreamTimeSyncTask implements Runnable{
                     }
                 }
             }
-        } catch (StorageNotInitialized storageNotInitialized) {
-            storageNotInitialized.printStackTrace();
+        } catch (SQLiteNotInitialized SQLiteNotInitialized) {
+            SQLiteNotInitialized.printStackTrace();
         }
     }
 }

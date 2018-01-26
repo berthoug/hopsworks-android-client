@@ -9,7 +9,10 @@ import org.junit.runner.RunWith;
 
 import io.hops.android.streams.records.AvroTemplate;
 import io.hops.android.streams.records.CoordinatesRecord;
-import io.hops.android.streams.storage.Storage;
+import io.hops.android.streams.storage.PropertiesTable;
+import io.hops.android.streams.storage.RecordsTable;
+import io.hops.android.streams.storage.SQLite;
+import io.hops.android.streams.storage.TimestampsTable;
 import io.hops.android.streams.time.Timer;
 import io.hops.android.streams.time.Timestamp;
 
@@ -21,49 +24,47 @@ import static org.junit.Assert.*;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class StorageInstrumentedTest {
+public class StorageTest {
     @Test
     public void testAppContext() throws Exception {
-        // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
         assertEquals("io.hops.android.streams.test", appContext.getPackageName());
     }
 
     @Test
     public void testPropertiesPersistence() throws Exception {
-        // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
-        Storage storage = Storage.init(appContext);
+        SQLite.init(appContext);
 
         String property = "testProperty";
         String value = "2";
         String updated_value = "5";
 
-        storage.deleteProperty(property);
-        assertEquals(storage.loadProperty(property), null);
-        assertEquals(storage.saveProperty(property, value), true);
-        assertEquals(storage.loadProperty(property), value);
-        assertEquals(storage.saveProperty(property, updated_value), true);
-        assertEquals(storage.loadProperty(property), updated_value);
-        storage.deleteProperty(property);
+        PropertiesTable.delete(property);
+        assertEquals(PropertiesTable.read(property), null);
+        assertEquals(PropertiesTable.write(property, value), true);
+        assertEquals(PropertiesTable.read(property), value);
+        assertEquals(PropertiesTable.write(property, updated_value), true);
+        assertEquals(PropertiesTable.read(property), updated_value);
+        PropertiesTable.delete(property);
     }
 
     @Test
     public void testRecordsPersistence() throws Exception {
-        // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
-        Storage storage = Storage.init(appContext);
+        SQLite.init(appContext);
 
         CoordinatesRecord record = new CoordinatesRecord(59.3315, 18.0715);
-        assertEquals(storage.saveRecord(record), true);
+        String x = AvroTemplate.getSchema(new CoordinatesRecord(1.23, 2.42));
+        assertEquals(record.save(), true);
 
-        CoordinatesRecord retrievedRecord = (CoordinatesRecord) storage.loadRecord(
+        CoordinatesRecord retrievedRecord = (CoordinatesRecord) RecordsTable.read(
                 record.getRecordUUID(), CoordinatesRecord.class);
         assertEquals(record.getRecordUUID(), retrievedRecord.getRecordUUID());
         assertEquals(record.getLatitude(), retrievedRecord.getLatitude(), 0.001);
         assertEquals(record.getLongitude(), retrievedRecord.getLongitude(), 0.001);
-        storage.deleteRecord(record);
-        retrievedRecord = (CoordinatesRecord) storage.loadRecord(
+        record.delete();
+        retrievedRecord = (CoordinatesRecord) RecordsTable.read(
                 record.getRecordUUID(), CoordinatesRecord.class);
         assertEquals(retrievedRecord, null);
     }
@@ -71,9 +72,10 @@ public class StorageInstrumentedTest {
     @Test
     public void testMaxTimestamp() throws Exception {
         Context appContext = InstrumentationRegistry.getTargetContext();
-        Storage storage = Storage.init(appContext);
+        SQLite.init(appContext);
+
         Timestamp refTimestamp = Timer.getInstance().getClonedReferenceTimestamp();
-        Timestamp storedTimestamp = storage.loadMaxBootNumTimestamp();
+        Timestamp storedTimestamp = TimestampsTable.loadMaxBootNumTimestamp();
         assertEquals(refTimestamp.getBootNum(), storedTimestamp.getBootNum());
         assertEquals(refTimestamp.getBootMillis(), storedTimestamp.getBootMillis());
     }
@@ -81,9 +83,10 @@ public class StorageInstrumentedTest {
     @Test
     public void testTimestampMemoryStorageSync() throws Exception {
         Context appContext = InstrumentationRegistry.getTargetContext();
-        Storage storage = Storage.init(appContext);
+        SQLite.init(appContext);
+
         Timestamp refTimestamp = Timer.getInstance().getClonedReferenceTimestamp();
-        Timestamp storedTimestamp = storage.loadMaxBootNumTimestamp();
+        Timestamp storedTimestamp = TimestampsTable.loadMaxBootNumTimestamp();
         assertEquals(refTimestamp.getBootNum(), storedTimestamp.getBootNum());
         assertEquals(refTimestamp.getBootMillis(), storedTimestamp.getBootMillis());
     }

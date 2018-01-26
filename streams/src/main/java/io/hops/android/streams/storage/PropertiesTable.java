@@ -23,15 +23,17 @@ public class PropertiesTable extends Table{
         return columns;
     }
 
-    public static boolean insert(SQLiteDatabase db, String property, String value){
+    public static boolean insert(String property, String value) throws SQLiteNotInitialized {
+        SQLiteDatabase db = SQLite.getInstance().getReadableDatabase();
         ContentValues values = new ContentValues();
         values.put(NAME.name, property);
         values.put(VALUE.name, value);
-
         return (db.insert(TABLE_NAME, null, values) != -1);
     }
 
-    public static boolean update(SQLiteDatabase db, String property, String value){
+    public static boolean update(String property, String value)
+            throws SQLiteNotInitialized {
+        SQLiteDatabase db = SQLite.getInstance().getWritableDatabase();
         String whereClause = NAME.name + "= ?";
         String[] whereArgs = new String[] { property };
 
@@ -41,7 +43,8 @@ public class PropertiesTable extends Table{
         return (db.update(TABLE_NAME, newValues, whereClause, whereArgs) > 0);
     }
 
-    public static String read(SQLiteDatabase db, String property){
+    public static String read(String property) throws SQLiteNotInitialized {
+        SQLiteDatabase db = SQLite.getInstance().getReadableDatabase();
         String value = null;
         Cursor cursor = null;
         try{
@@ -64,16 +67,16 @@ public class PropertiesTable extends Table{
         return value;
     }
 
-    public static boolean write(SQLiteDatabase db, String property, String value){
-        return update(db, property, value) || insert(db, property,value);
+    public static boolean write(String property, String value)
+            throws SQLiteNotInitialized {
+        return update(property, value) || insert(property,value);
     }
 
-    public static boolean delete(SQLiteDatabase db, String property){
+    public static boolean delete(String property) throws SQLiteNotInitialized {
+        SQLiteDatabase db = SQLite.getInstance().getWritableDatabase();
         String whereClause = NAME.name + "= ?";
         String[] whereArgs = new String[] { property };
         return (db.delete(TABLE_NAME, whereClause, whereArgs) > 0);
     }
-
-
 
 }
