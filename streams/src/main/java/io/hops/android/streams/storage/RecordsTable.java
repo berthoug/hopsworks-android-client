@@ -101,7 +101,7 @@ public class RecordsTable extends Table{
                 Object temp = Record.fromJson(payload, type);
                 if (temp != null){
                     Record record = (Record) temp;
-                    record.setAcked(acked);
+                    record.setAcked(acked > 0);
                     return record;
                 }
             }
@@ -140,7 +140,7 @@ public class RecordsTable extends Table{
                 Object temp = Record.fromJson(payload, type);
                 if (temp != null){
                     Record record = (Record) temp;
-                    record.setAcked(cursor.getLong(cursor.getColumnIndex(ACKED.name)));
+                    record.setAcked(cursor.getLong(cursor.getColumnIndex(ACKED.name))>0);
                     records.add((Record) temp);
                 }
             }

@@ -21,7 +21,7 @@ import static org.junit.Assert.assertSame;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class TimerInstrumentedTest {
+public class TimerTest {
 
     @Test
     public void testTimeSync() throws Exception {

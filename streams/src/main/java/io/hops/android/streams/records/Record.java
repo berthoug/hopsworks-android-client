@@ -54,12 +54,19 @@ public abstract class Record implements Comparable<Record>{
         return recordUUID;
     }
 
-    public long getAcked() {
-        return acked;
+    public boolean getAcked() {
+        if (acked > 0){
+            return true;
+        }
+        return false;
     }
 
-    public void setAcked(long acked) {
-        this.acked = acked;
+    public void setAcked(boolean acked) {
+        if (acked){
+            this.acked = 1;
+        }else{
+            this.acked = 0;
+        }
     }
 
     public long getBootNum() {
