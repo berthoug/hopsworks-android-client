@@ -27,12 +27,12 @@ import io.hops.android.streams.hopsworks.HopsWorksClientBuilder;
 import io.hops.android.streams.hopsworks.HopsWorksResponse;
 import io.hops.android.streams.hopsworks.SchemaDTO;
 import io.hops.android.streams.hopsworks.TopicRecordsDTO;
-import io.hops.android.streams.properties.DeviceUUID;
-import io.hops.android.streams.properties.PassUUID;
 import io.hops.android.streams.records.AvroTemplate;
 import io.hops.android.streams.records.CoordinatesRecord;
 import io.hops.android.streams.records.Record;
-import io.hops.android.streams.storage.Storage;
+import io.hops.android.streams.storage.DeviceCredentials;
+import io.hops.android.streams.storage.RecordsTable;
+import io.hops.android.streams.storage.SQLite;
 import io.hops.android.streams.storage.StorageNotInitialized;
 import io.hops.android.streams.streams.RecordStream;
 import retrofit2.Call;
@@ -54,7 +54,7 @@ public class MainActivity extends Activity{
         hopsworksClient = HopsWorksClientBuilder.getHopsWorksClientSkipSslChecks(BASE_URL);
         final TextView txtDisplay = (TextView)findViewById(R.id.txtDisplay);
         txtDisplay.setMovementMethod(new ScrollingMovementMethod());
-        Storage.init(this.getApplicationContext());
+        SQLite.init(this.getApplicationContext());
     }
 
     @Override
@@ -74,11 +74,16 @@ public class MainActivity extends Activity{
     }
 
     private void display(HopsWorksResponse response){
-        if (response.getCode() >= 200 && response.getCode() < 300){
-            display(String.valueOf(response.getCode()) + " " + response.getMessage());
+        if (response == null || response.getCode() == null){
+            display("Unexpected error.");
         }else{
-            display(String.valueOf(response.getCode()) + " " + response.getReason());
+            if (response.getCode() >= 200 && response.getCode() < 300){
+                display(String.valueOf(response.getCode()) + " " + response.getMessage());
+            }else{
+                display(String.valueOf(response.getCode()) + " " + response.getReason());
+            }
         }
+
     }
 
     private TextView getDisplay(){
@@ -102,11 +107,11 @@ public class MainActivity extends Activity{
     }
 
     private DeviceDTO getDeviceInfo(){
-        Storage.init(this.getApplicationContext());
+        SQLite.init(this.getApplicationContext());
         try{
             return new DeviceDTO(
-                    DeviceUUID.getValue(),
-                    PassUUID.getValue(),
+                    DeviceCredentials.getDeviceUUID(),
+                    DeviceCredentials.getPassword(),
                     getAlias());
         }catch (StorageNotInitialized storageNotInitialized){
             display(storageNotInitialized.getMessage());
@@ -376,8 +381,8 @@ public class MainActivity extends Activity{
         @Override
         public void run() {
             try {
-                final ArrayList<Record> records = Storage.getInstance().loadRecordsNotAcked(
-                        CoordinatesRecord.class);
+                final ArrayList<Record> records =
+                        RecordsTable.readAllNotAcked(CoordinatesRecord.class);
 
                 if (records.isEmpty()){
                     getDisplay().post(new DisplayTask("No records to send."));
@@ -439,7 +444,5 @@ public class MainActivity extends Activity{
             }
         }
     }
-
-
 
 }

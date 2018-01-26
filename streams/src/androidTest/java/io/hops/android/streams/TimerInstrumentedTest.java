@@ -8,8 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import io.hops.android.streams.records.CoordinatesRecord;
-import io.hops.android.streams.storage.Storage;
+import io.hops.android.streams.storage.SQLite;
 import io.hops.android.streams.time.Timer;
 import io.hops.android.streams.time.Timestamp;
 
@@ -27,7 +26,7 @@ public class TimerInstrumentedTest {
     @Test
     public void testTimeSync() throws Exception {
         Context appContext = InstrumentationRegistry.getTargetContext();
-        Storage.init(appContext);
+        SQLite.init(appContext);
         Timestamp refTimestamp = Timer.getInstance().getClonedReferenceTimestamp();
         Timer.getInstance().sync("pool.ntp.org", 5000);
         Timestamp refTimestampNew = Timer.getInstance().getClonedReferenceTimestamp();
@@ -42,7 +41,7 @@ public class TimerInstrumentedTest {
     @Test
     public void testTimestampQuality() throws Exception {
         Context appContext = InstrumentationRegistry.getTargetContext();
-        Storage.init(appContext);
+        SQLite.init(appContext);
         Timer.getInstance().sync("pool.ntp.org", 5000);
         for(int i=0; i<1000; i++){
             Timestamp timestampPrev = Timer.getInstance().getTimestamp();

@@ -1,7 +1,7 @@
 package io.hops.android.streams.streams;
 
 import io.hops.android.streams.records.Record;
-import io.hops.android.streams.storage.Storage;
+import io.hops.android.streams.storage.RecordsTable;
 import io.hops.android.streams.storage.StorageNotInitialized;
 
 
@@ -17,7 +17,7 @@ public class StreamCleanTask implements Runnable{
     @Override
     public void run() {
         try {
-            Storage.getInstance().deleteAckedRecords(cls);
+            RecordsTable.deleteAckedRecords(cls);
         } catch (StorageNotInitialized storageNotInitialized) {
             storageNotInitialized.printStackTrace();
         }

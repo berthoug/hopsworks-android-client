@@ -1,9 +1,8 @@
 package io.hops.android.streams.time;
 
 import android.os.SystemClock;
-
-import io.hops.android.streams.storage.Storage;
 import io.hops.android.streams.storage.StorageNotInitialized;
+import io.hops.android.streams.storage.TimestampsTable;
 
 public class Timer{
 
@@ -18,10 +17,10 @@ public class Timer{
             synchronized (lock) {
                 if (timer == null) {
                     timer = new Timer();
-                    referenceTimestamp = Storage.getInstance().loadMaxBootNumTimestamp();
+                    referenceTimestamp = TimestampsTable.loadMaxBootNumTimestamp();
                     if(referenceTimestamp == null){
                         referenceTimestamp = new Timestamp(0, SystemClock.elapsedRealtime(), -1L);
-                        Storage.getInstance().saveTimestamp(referenceTimestamp);
+                        TimestampsTable.write(referenceTimestamp);
                     }
                 }
             }
@@ -33,7 +32,7 @@ public class Timer{
         long bootMillis = SystemClock.elapsedRealtime();
         synchronized (lock){
             referenceTimestamp = new Timestamp(referenceTimestamp.getBootNum()+1, bootMillis, -1L);
-            Storage.getInstance().saveTimestamp(referenceTimestamp);
+            TimestampsTable.write(referenceTimestamp);
         }
 
     }
@@ -48,7 +47,7 @@ public class Timer{
             synchronized(lock){
                 referenceTimestamp = new Timestamp(
                         referenceTimestamp.getBootNum(), bootMillisNow, epochMillisNow);
-                Storage.getInstance().saveTimestamp(referenceTimestamp);
+                TimestampsTable.write(referenceTimestamp);
             }
             return true;
         }

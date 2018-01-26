@@ -6,8 +6,8 @@ import com.google.gson.Gson;
 
 import java.util.UUID;
 
-import io.hops.android.streams.properties.DeviceUUID;
-import io.hops.android.streams.storage.Storage;
+import io.hops.android.streams.storage.DeviceCredentials;
+import io.hops.android.streams.storage.RecordsTable;
 import io.hops.android.streams.storage.StorageNotInitialized;
 import io.hops.android.streams.time.Timer;
 import io.hops.android.streams.time.Timestamp;
@@ -34,7 +34,7 @@ public abstract class Record implements Comparable<Record>{
 
     public Record() throws StorageNotInitialized {
         Timestamp timestamp = Timer.getInstance().getTimestamp();
-        this.deviceUUID = DeviceUUID.getValue();
+        this.deviceUUID = DeviceCredentials.getDeviceUUID();
         this.bootNum = timestamp.getBootNum();
         this.bootMillis = timestamp.getBootMillis();
         this.epochMillis = timestamp.getEpochMillis();
@@ -87,7 +87,11 @@ public abstract class Record implements Comparable<Record>{
     }
 
     public boolean save() throws StorageNotInitialized{
-        return Storage.getInstance().saveRecord(this);
+        return RecordsTable.write(this);
+    }
+
+    public boolean delete() throws StorageNotInitialized{
+        return RecordsTable.delete(this.recordUUID);
     }
 
     public Timestamp getTimestamp(){
