@@ -60,12 +60,12 @@ public class RecordsTable extends Table{
         return values;
     }
 
-    public static boolean insert(Record record) throws StorageNotInitialized{
+    public static boolean insert(Record record) throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getWritableDatabase();
         return (db.insert(TABLE_NAME, null, getContentValues(record)) != -1);
     }
 
-    public static boolean update(Record record) throws StorageNotInitialized{
+    public static boolean update(Record record) throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getWritableDatabase();
         String whereClause = RECORD_UUID.name + "= ?";
         String[] whereArgs = new String[] { record.getRecordUUID() };
@@ -73,11 +73,11 @@ public class RecordsTable extends Table{
                 TABLE_NAME, getContentValues(record), whereClause, whereArgs) > 0);
     }
 
-    public static boolean write(Record record) throws StorageNotInitialized{
+    public static boolean write(Record record) throws SQLiteNotInitialized {
         return update(record) || insert(record);
     }
 
-    public static boolean delete(String recordUUID) throws StorageNotInitialized{
+    public static boolean delete(String recordUUID) throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getWritableDatabase();
         String whereClause = RECORD_UUID.name + "= ?";
         String[] whereArgs = new String[] { recordUUID };
@@ -85,7 +85,7 @@ public class RecordsTable extends Table{
     }
 
     public static Record read(String recordUUID, Class<? extends Record> type)
-            throws StorageNotInitialized{
+            throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getReadableDatabase();
         Cursor cursor = null;
         try{
@@ -119,7 +119,7 @@ public class RecordsTable extends Table{
 
     public static ArrayList<Record> readRecords(
             Class<? extends Record> type, String selection, String[] selectionArgs,
-            String orderBy, String limit) throws StorageNotInitialized{
+            String orderBy, String limit) throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getReadableDatabase();
         Cursor cursor = null;
 
@@ -156,21 +156,21 @@ public class RecordsTable extends Table{
     }
 
     public static ArrayList<Record> readAll(Class<? extends Record> type)
-            throws StorageNotInitialized{
+            throws SQLiteNotInitialized {
         String selection = TYPE.name + " = ?";
         String[] selectionArgs = {type.getName()};
         return readRecords(type, selection, selectionArgs, null, null);
     }
 
     public static ArrayList<Record> readAllNotAcked(Class<? extends Record> type)
-            throws StorageNotInitialized{
+            throws SQLiteNotInitialized {
         String selection = TYPE.name + " = ? AND " + ACKED.name + " = ?";
         String[] selectionArgs = {type.getName(), "0"};
         return readRecords(type, selection, selectionArgs, null, null);
     }
 
     public static ArrayList<Record> readAllNotAckedLimit(Class<? extends Record> type, long limit)
-            throws StorageNotInitialized{
+            throws SQLiteNotInitialized {
         String selection = TYPE.name + " = ? AND " + ACKED.name + " = ?";
         String orderBy = BOOT_NUM.name + ", " + BOOT_MILLIS;
         String limitStr = String.valueOf(limit);
@@ -179,14 +179,14 @@ public class RecordsTable extends Table{
     }
 
     public static ArrayList<Record> readAllSinceReboot(Class<? extends Record> type, long bootNum)
-            throws StorageNotInitialized{
+            throws SQLiteNotInitialized {
         String selection = TYPE.name + " = ? AND " + BOOT_NUM.name + " = ?";
         String[] selectionArgs = {type.getName(), String.valueOf(bootNum)};
         return readRecords(type, selection, selectionArgs, null, null);
     }
 
     public static ArrayList<Record> readAllSinceRebootWithoutEpoch(
-            Class<? extends Record> type, long bootNum) throws StorageNotInitialized{
+            Class<? extends Record> type, long bootNum) throws SQLiteNotInitialized {
         String selection =
                 TYPE.name + " = ? AND " +
                 BOOT_NUM.name + " = ? AND " +
@@ -197,7 +197,7 @@ public class RecordsTable extends Table{
 
 
     public static boolean deleteAllRecords(Class<? extends Record> type)
-            throws StorageNotInitialized{
+            throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getWritableDatabase();
         String whereClause = TYPE.name + " = ?";
         String[] whereArgs = new String[] {type.getName()};
@@ -205,7 +205,7 @@ public class RecordsTable extends Table{
     }
 
     public static boolean deleteAckedRecords(Class<? extends Record> type)
-            throws StorageNotInitialized{
+            throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getWritableDatabase();
         String whereClause = ACKED.name + "> ? AND " + TYPE.name + " = ?";
         String[] whereArgs = new String[] { "0", type.getName()};

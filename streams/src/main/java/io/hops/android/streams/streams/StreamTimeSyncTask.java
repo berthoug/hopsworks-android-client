@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import io.hops.android.streams.records.Record;
 import io.hops.android.streams.storage.RecordsTable;
-import io.hops.android.streams.storage.StorageNotInitialized;
+import io.hops.android.streams.storage.SQLiteNotInitialized;
 import io.hops.android.streams.time.Timer;
 import io.hops.android.streams.time.Timestamp;
 
@@ -35,8 +35,8 @@ public class StreamTimeSyncTask implements Runnable{
                     }
                 }
             }
-        } catch (StorageNotInitialized storageNotInitialized) {
-            storageNotInitialized.printStackTrace();
+        } catch (SQLiteNotInitialized SQLiteNotInitialized) {
+            SQLiteNotInitialized.printStackTrace();
         }
     }
 }

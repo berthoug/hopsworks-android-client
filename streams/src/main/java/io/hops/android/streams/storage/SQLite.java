@@ -26,7 +26,7 @@ public class SQLite extends SQLiteOpenHelper{
         return sqLite;
     }
 
-    public static SQLite getInstance() throws StorageNotInitialized {
+    public static SQLite getInstance() throws SQLiteNotInitialized {
         if (sqLite == null){
             try {
                 Thread.sleep(1000);
@@ -34,8 +34,8 @@ public class SQLite extends SQLiteOpenHelper{
                 e.printStackTrace();
             }
             if (sqLite==null){
-                throw new StorageNotInitialized(
-                        "You need to call Storage.init(context) " +
+                throw new SQLiteNotInitialized(
+                        "You need to call SQLite.init(context) " +
                                 "before any other call to the android-streams library " +
                                 "is executed. Like on your Activity's onCreate() method.");
             }

@@ -23,7 +23,7 @@ public class PropertiesTable extends Table{
         return columns;
     }
 
-    public static boolean insert(String property, String value) throws StorageNotInitialized{
+    public static boolean insert(String property, String value) throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getReadableDatabase();
         ContentValues values = new ContentValues();
         values.put(NAME.name, property);
@@ -32,7 +32,7 @@ public class PropertiesTable extends Table{
     }
 
     public static boolean update(String property, String value)
-            throws StorageNotInitialized{
+            throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getWritableDatabase();
         String whereClause = NAME.name + "= ?";
         String[] whereArgs = new String[] { property };
@@ -43,7 +43,7 @@ public class PropertiesTable extends Table{
         return (db.update(TABLE_NAME, newValues, whereClause, whereArgs) > 0);
     }
 
-    public static String read(String property) throws StorageNotInitialized{
+    public static String read(String property) throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getReadableDatabase();
         String value = null;
         Cursor cursor = null;
@@ -68,11 +68,11 @@ public class PropertiesTable extends Table{
     }
 
     public static boolean write(String property, String value)
-            throws StorageNotInitialized{
+            throws SQLiteNotInitialized {
         return update(property, value) || insert(property,value);
     }
 
-    public static boolean delete(String property) throws StorageNotInitialized{
+    public static boolean delete(String property) throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getWritableDatabase();
         String whereClause = NAME.name + "= ?";
         String[] whereArgs = new String[] { property };

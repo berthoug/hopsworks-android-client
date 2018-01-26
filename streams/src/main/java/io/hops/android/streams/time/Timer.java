@@ -1,7 +1,7 @@
 package io.hops.android.streams.time;
 
 import android.os.SystemClock;
-import io.hops.android.streams.storage.StorageNotInitialized;
+import io.hops.android.streams.storage.SQLiteNotInitialized;
 import io.hops.android.streams.storage.TimestampsTable;
 
 public class Timer{
@@ -12,7 +12,7 @@ public class Timer{
 
     private Timer(){}
 
-    public static Timer getInstance() throws StorageNotInitialized {
+    public static Timer getInstance() throws SQLiteNotInitialized {
         if (timer == null) {
             synchronized (lock) {
                 if (timer == null) {
@@ -28,7 +28,7 @@ public class Timer{
         return timer;
     }
 
-     void rebootHappened() throws StorageNotInitialized {
+     void rebootHappened() throws SQLiteNotInitialized {
         long bootMillis = SystemClock.elapsedRealtime();
         synchronized (lock){
             referenceTimestamp = new Timestamp(referenceTimestamp.getBootNum()+1, bootMillis, -1L);
@@ -37,7 +37,7 @@ public class Timer{
 
     }
 
-    public boolean sync(String host, int timeout) throws StorageNotInitialized {
+    public boolean sync(String host, int timeout) throws SQLiteNotInitialized {
         SntpClient client = new SntpClient();
         if (client.requestTime(host, timeout)) {
             long bootMillisNow = SystemClock.elapsedRealtime();

@@ -4,7 +4,7 @@ package io.hops.android.streams.time;
 import android.app.IntentService;
 import android.content.Intent;
 
-import io.hops.android.streams.storage.StorageNotInitialized;
+import io.hops.android.streams.storage.SQLiteNotInitialized;
 
 public class TimerSyncService extends IntentService {
 
@@ -27,8 +27,8 @@ public class TimerSyncService extends IntentService {
             if (Timer.getInstance().sync(host, timeout)){
                 // TODO: Trigger recalculation of records with no epochMillis
             }
-        } catch (StorageNotInitialized storageNotInitialized) {
-            storageNotInitialized.printStackTrace();
+        } catch (SQLiteNotInitialized SQLiteNotInitialized) {
+            SQLiteNotInitialized.printStackTrace();
         }
     }
 }

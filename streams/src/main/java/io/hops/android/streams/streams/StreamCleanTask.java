@@ -2,7 +2,7 @@ package io.hops.android.streams.streams;
 
 import io.hops.android.streams.records.Record;
 import io.hops.android.streams.storage.RecordsTable;
-import io.hops.android.streams.storage.StorageNotInitialized;
+import io.hops.android.streams.storage.SQLiteNotInitialized;
 
 
 public class StreamCleanTask implements Runnable{
@@ -18,8 +18,8 @@ public class StreamCleanTask implements Runnable{
     public void run() {
         try {
             RecordsTable.deleteAckedRecords(cls);
-        } catch (StorageNotInitialized storageNotInitialized) {
-            storageNotInitialized.printStackTrace();
+        } catch (SQLiteNotInitialized SQLiteNotInitialized) {
+            SQLiteNotInitialized.printStackTrace();
         }
 
     }

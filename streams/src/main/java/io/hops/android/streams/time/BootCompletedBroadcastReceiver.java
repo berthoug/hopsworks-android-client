@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import io.hops.android.streams.storage.SQLite;
-import io.hops.android.streams.storage.StorageNotInitialized;
+import io.hops.android.streams.storage.SQLiteNotInitialized;
 
 public class BootCompletedBroadcastReceiver extends BroadcastReceiver {
 
@@ -19,7 +19,7 @@ public class BootCompletedBroadcastReceiver extends BroadcastReceiver {
             SQLite.init(context);
             try {
                 Timer.getInstance().rebootHappened();
-            } catch (StorageNotInitialized e) {
+            } catch (SQLiteNotInitialized e) {
                 e.printStackTrace();
             }
         }

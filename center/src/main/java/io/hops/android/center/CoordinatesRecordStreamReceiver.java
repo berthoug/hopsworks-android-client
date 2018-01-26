@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.widget.Toast;
 
 import io.hops.android.streams.records.CoordinatesRecord;
-import io.hops.android.streams.streams.RecordStream;
+import io.hops.android.streams.streams.RecordStreamWorker;
 
 
 public class CoordinatesRecordStreamReceiver extends BroadcastReceiver {
@@ -21,7 +21,7 @@ public class CoordinatesRecordStreamReceiver extends BroadcastReceiver {
 
         String action=intent.getStringExtra("action");
         if(action.equals("stop")){
-            RecordStream.closeStream(CoordinatesRecord.class);
+            RecordStreamWorker.closeStream(CoordinatesRecord.class);
         }
         Toast.makeText(context,"Producing stopped.",Toast.LENGTH_SHORT).show();
 

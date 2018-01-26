@@ -25,7 +25,7 @@ public class TimestampsTable extends Table{
         return columns;
     }
 
-    public static boolean insert(Timestamp timestamp) throws StorageNotInitialized{
+    public static boolean insert(Timestamp timestamp) throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(BOOT_NUM.name, timestamp.getBootNum());
@@ -34,7 +34,7 @@ public class TimestampsTable extends Table{
         return (db.insert(TABLE_NAME, null, values) != -1);
     }
 
-    public static boolean update(Timestamp timestamp) throws StorageNotInitialized{
+    public static boolean update(Timestamp timestamp) throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getWritableDatabase();
         String whereClause = BOOT_NUM.name + "= ?";
         String[] whereArgs = new String[] { String.valueOf(timestamp.getBootNum())};
@@ -44,7 +44,7 @@ public class TimestampsTable extends Table{
         return (db.update(TABLE_NAME, newValues, whereClause, whereArgs) > 0);
     }
 
-    public static Timestamp read(long bootNum) throws StorageNotInitialized{
+    public static Timestamp read(long bootNum) throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getReadableDatabase();
         Cursor cursor = null;
         try{
@@ -71,18 +71,18 @@ public class TimestampsTable extends Table{
         return null;
     }
 
-    public static boolean write(Timestamp timestamp) throws StorageNotInitialized{
+    public static boolean write(Timestamp timestamp) throws SQLiteNotInitialized {
         return update(timestamp) || insert(timestamp);
     }
 
-    public static boolean delete(long bootNum) throws StorageNotInitialized{
+    public static boolean delete(long bootNum) throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getWritableDatabase();
         String whereClause = BOOT_NUM.name + "= ?";
         String[] whereArgs = new String[] { String.valueOf(bootNum) };
         return (db.delete(TABLE_NAME, whereClause, whereArgs) > 0);
     }
 
-    public static Timestamp loadMaxBootNumTimestamp() throws StorageNotInitialized{
+    public static Timestamp loadMaxBootNumTimestamp() throws SQLiteNotInitialized {
         SQLiteDatabase db = SQLite.getInstance().getReadableDatabase();
         Cursor cursor = null;
         try{

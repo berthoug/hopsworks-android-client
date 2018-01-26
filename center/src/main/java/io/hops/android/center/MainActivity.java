@@ -33,8 +33,8 @@ import io.hops.android.streams.records.Record;
 import io.hops.android.streams.storage.DeviceCredentials;
 import io.hops.android.streams.storage.RecordsTable;
 import io.hops.android.streams.storage.SQLite;
-import io.hops.android.streams.storage.StorageNotInitialized;
-import io.hops.android.streams.streams.RecordStream;
+import io.hops.android.streams.storage.SQLiteNotInitialized;
+import io.hops.android.streams.streams.RecordStreamWorker;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -113,8 +113,8 @@ public class MainActivity extends Activity{
                     DeviceCredentials.getDeviceUUID(),
                     DeviceCredentials.getPassword(),
                     getAlias());
-        }catch (StorageNotInitialized storageNotInitialized){
-            display(storageNotInitialized.getMessage());
+        }catch (SQLiteNotInitialized SQLiteNotInitialized){
+            display(SQLiteNotInitialized.getMessage());
             return null;
         }
     }
@@ -217,8 +217,8 @@ public class MainActivity extends Activity{
                         randomGenerator.nextDouble()*180, randomGenerator.nextDouble()*180);
                 list.add(record);
             }
-        } catch (StorageNotInitialized storageNotInitialized) {
-            storageNotInitialized.printStackTrace();
+        } catch (SQLiteNotInitialized SQLiteNotInitialized) {
+            SQLiteNotInitialized.printStackTrace();
         }
         final long y = SystemClock.currentThreadTimeMillis();
 
@@ -238,7 +238,7 @@ public class MainActivity extends Activity{
                             display("Length miss match!");
                         }else{
                             for (int i=0; i<list.size();i++){
-                                list.get(i).setAcked(1);
+                                list.get(i).setAcked(true);
                             }
                             display(String.valueOf(records.get(0).isAck()));
                         }
@@ -294,24 +294,24 @@ public class MainActivity extends Activity{
 
 
     public void produceInBackground(View view) {
-        RecordStream recordStream = RecordStream.getInstance(CoordinatesRecord.class);
-        recordStream.timeSync();
-        recordStream.clean();
-        recordStream.produce(new ProduceTask(), 0, 500, TimeUnit.MILLISECONDS);
-        recordStream.stream(new StreamTask(this.getApplicationContext()), 0, 10, TimeUnit.SECONDS);
+        RecordStreamWorker recordStreamWorker = RecordStreamWorker.getInstance(CoordinatesRecord.class);
+        recordStreamWorker.timeSync();
+        recordStreamWorker.clean();
+        recordStreamWorker.produce(new ProduceTask(), 0, 500, TimeUnit.MILLISECONDS);
+        recordStreamWorker.stream(new StreamTask(this.getApplicationContext()), 0, 10, TimeUnit.SECONDS);
         notification(this.getApplicationContext());
     }
 
     public static void closeStreaming(Class cls){
-        RecordStream recordStream = RecordStream.getInstance(cls);
-        recordStream.close();
+        RecordStreamWorker recordStreamWorker = RecordStreamWorker.getInstance(cls);
+        recordStreamWorker.close();
     }
 
     public void getAvroSchema(View view) {
         try {
             display(AvroTemplate.getSchema(new CoordinatesRecord(1.23, 2.42)));
-        } catch (StorageNotInitialized storageNotInitialized) {
-            storageNotInitialized.printStackTrace();
+        } catch (SQLiteNotInitialized SQLiteNotInitialized) {
+            SQLiteNotInitialized.printStackTrace();
         }
 
     }
@@ -364,8 +364,8 @@ public class MainActivity extends Activity{
                         randomGenerator.nextDouble()*180, randomGenerator.nextDouble()*180);
                 record.save();
                 getDisplay().post(new DisplayTask(record.getRecordUUID() + " pro"));
-            } catch (StorageNotInitialized storageNotInitialized) {
-                display(storageNotInitialized.getMessage());
+            } catch (SQLiteNotInitialized SQLiteNotInitialized) {
+                display(SQLiteNotInitialized.getMessage());
             }
         }
     }
@@ -411,7 +411,7 @@ public class MainActivity extends Activity{
                                     for (int i = 0; i < records.size(); i++) {
                                         Record record = records.get(i);
                                         if (acks.get(i).isAck()){
-                                            record.setAcked(1);
+                                            record.setAcked(true);
                                             record.save();
                                             getDisplay().post(
                                                     new DisplayTask(
@@ -428,8 +428,8 @@ public class MainActivity extends Activity{
                             }
                         } catch (IOException e) {
                             display(e.getMessage());
-                        } catch (StorageNotInitialized storageNotInitialized) {
-                            display(storageNotInitialized.getMessage());
+                        } catch (SQLiteNotInitialized SQLiteNotInitialized) {
+                            display(SQLiteNotInitialized.getMessage());
                         }
                     }
 
@@ -439,8 +439,8 @@ public class MainActivity extends Activity{
                     }
                 });
 
-            } catch (StorageNotInitialized storageNotInitialized) {
-                storageNotInitialized.printStackTrace();
+            } catch (SQLiteNotInitialized SQLiteNotInitialized) {
+                SQLiteNotInitialized.printStackTrace();
             }
         }
     }
