@@ -9,11 +9,11 @@ import io.hops.android.streams.storage.SQLiteNotInitialized;
 import io.hops.android.streams.time.Timer;
 import io.hops.android.streams.time.Timestamp;
 
-public class StreamTimeSyncTask implements Runnable{
+public class TimeSyncTask implements Runnable{
 
     private Class<? extends Record> cls;
 
-    public StreamTimeSyncTask(Class<? extends Record> cls){
+    public TimeSyncTask(Class<? extends Record> cls){
         this.cls = cls;
     }
 

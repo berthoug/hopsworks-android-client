@@ -5,12 +5,12 @@ import io.hops.android.streams.storage.RecordsTable;
 import io.hops.android.streams.storage.SQLiteNotInitialized;
 
 
-public class StreamCleanTask implements Runnable{
+public class CleanTask implements Runnable{
 
 
     private Class<? extends Record> cls;
 
-    public StreamCleanTask(Class<? extends Record> cls){
+    public CleanTask(Class<? extends Record> cls){
         this.cls = cls;
     }
 

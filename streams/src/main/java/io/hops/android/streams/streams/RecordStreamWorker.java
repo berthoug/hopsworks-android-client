@@ -95,7 +95,7 @@ public class RecordStreamWorker {
     }
 
     public void clean(){
-        this.clean(new StreamCleanTask(recordType), 0, 10, TimeUnit.MINUTES);
+        this.clean(new CleanTask(recordType), 0, 10, TimeUnit.MINUTES);
     }
 
 
@@ -107,7 +107,7 @@ public class RecordStreamWorker {
 
     public void timeSync(){
         this.timeSync(
-                new StreamTimeSyncTask(recordType), 0, 1, TimeUnit.HOURS);
+                new TimeSyncTask(recordType), 0, 1, TimeUnit.HOURS);
     }
 
     public void stopProducing(){
