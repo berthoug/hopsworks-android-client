@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,7 +57,7 @@ public class MainActivity extends Activity{
 
     private void display(String text){
         Log.i(MainActivity.class.getSimpleName(), text);
-        Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();
+        Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show();
         final TextView txtDisplay = (TextView)findViewById(R.id.txtDisplay);
         txtDisplay.setText(txtDisplay.getText() + "\n" + text);
     }
@@ -280,16 +281,29 @@ public class MainActivity extends Activity{
     }
 
     /***
-     * Code executed when the Produce button is clicked.
+     * Code executed when the Stream button is clicked.
      */
-    public void Background(View view) {
+    public void streamInBackground(View view) {
         RecordStreamWorker recordStreamWorker =
                 RecordStreamWorker.getInstance(CoordinatesRecord.class);
-        recordStreamWorker.timeSync();
-        recordStreamWorker.clean();
-        recordStreamWorker.produce(new ProduceTask(), 0, 4, TimeUnit.SECONDS);
-        recordStreamWorker.stream(
-                new StreamTask(this.getApplicationContext()), 0, 10, TimeUnit.SECONDS);
+        if (recordStreamWorker.isStreaming()){
+            recordStreamWorker.stopTimeSyncing();
+            recordStreamWorker.stopProducing();
+            recordStreamWorker.stopStreaming();
+            recordStreamWorker.stopCleaning();
+            display("Thread ended");
+            Button btnStream = (Button)findViewById(R.id.btnProduceInBackground);
+            btnStream.setText("Start Stream");
+        }else{
+            display("Thread started");
+            recordStreamWorker.timeSync();
+            recordStreamWorker.clean();
+            recordStreamWorker.produce(new ProduceTask(), 0, 4, TimeUnit.SECONDS);
+            recordStreamWorker.stream(
+                    new StreamTask(this.getApplicationContext()), 0, 10, TimeUnit.SECONDS);
+            Button btnStream = (Button)findViewById(R.id.btnProduceInBackground);
+            btnStream.setText("Stop Stream");
+        }
     }
 
     public static void closeStreaming(Class cls){
@@ -350,7 +364,7 @@ public class MainActivity extends Activity{
         @Override
         public void run() {
             try {
-                // Gets the first 100 records that are not acknowledged from the database.
+                // Gets the records that are not acknowledged from the database.
                 final ArrayList<Record> records =
                         RecordsTable.readAllNotAcked(CoordinatesRecord.class);
                 if (records.isEmpty()){
