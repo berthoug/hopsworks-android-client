@@ -59,7 +59,7 @@
         android:layout_height="45dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Filotas"
+        android:hint="alias"
         tools:layout_editor_absoluteY="81dp"
         app:layout_constraintLeft_toRightOf="@+id/txtProjectName"
         android:layout_marginLeft="25dp" />
@@ -70,7 +70,7 @@
         android:layout_height="45dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="intrabody"
+        android:hint="project"
         app:layout_constraintHorizontal_chainStyle="spread"
         tools:layout_editor_absoluteY="81dp"
         tools:layout_editor_absoluteX="16dp" />
@@ -91,19 +91,18 @@
 
     <TextView
         android:id="@+id/txtDisplay"
-        android:layout_width="294dp"
-        android:layout_height="100dp"
-        android:text=""
-        android:maxLines = "300"
-        android:scrollbars = "vertical"
-        android:textColor="@color/colorWhite"
-        android:background="@color/colorBlack"
-        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
-        app:layout_constraintTop_toBottomOf="@+id/txtAlias"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="317dp"
+        android:layout_height="139dp"
         android:layout_marginTop="8dp"
-        tools:layout_editor_absoluteY="203dp" />
+        android:background="@color/colorBlack"
+        android:maxLines="300"
+        android:scrollbars="vertical"
+        android:text=""
+        android:textColor="@color/colorWhite"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtAlias" />
 
     <Button
         android:id="@+id/btnProduceInBackground"
@@ -135,7 +134,7 @@
         android:layout_height="44dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Galileo"
+        android:hint="topic"
         app:layout_constraintLeft_toRightOf="@+id/txtAlias"
         tools:layout_editor_absoluteY="81dp"
         android:layout_marginLeft="25dp" />

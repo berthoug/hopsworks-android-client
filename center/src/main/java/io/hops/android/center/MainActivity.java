@@ -57,7 +57,7 @@ public class MainActivity extends Activity{
 
     private void display(String text){
         Log.i(MainActivity.class.getSimpleName(), text);
-        Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show();
         final TextView txtDisplay = (TextView)findViewById(R.id.txtDisplay);
         txtDisplay.setText(txtDisplay.getText() + "\n" + text);
     }
@@ -80,15 +80,15 @@ public class MainActivity extends Activity{
     }
 
     private String getProjectName() {
-        return ((TextView) findViewById(R.id.txtProjectName)).getText().toString();
+        return ((TextView) findViewById(R.id.txtProjectName)).getText().toString().trim();
     }
 
     private String getProjectTopic(){
-        return ((TextView) findViewById(R.id.txtTopicName)).getText().toString();
+        return ((TextView) findViewById(R.id.txtTopicName)).getText().toString().trim();
     }
 
     private String getAlias(){
-        return ((TextView) findViewById(R.id.txtAlias)).getText().toString();
+        return ((TextView) findViewById(R.id.txtAlias)).getText().toString().trim();
     }
 
     private void setJwtToken(String jwtToken){
