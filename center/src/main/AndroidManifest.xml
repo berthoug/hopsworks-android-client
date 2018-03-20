@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.hops.android.center">
-
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_room_black_24dp"
@@ -16,7 +18,7 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name="io.hops.android.center.CoordinatesRecordStreamReceiver">
+            android:name="io.hops.android.center.IntrabodyRecordStreamReceiver">
         </receiver>
     </application>
 </manifest>

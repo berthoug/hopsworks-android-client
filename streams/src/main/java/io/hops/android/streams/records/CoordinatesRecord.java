@@ -1,5 +1,8 @@
 package io.hops.android.streams.records;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import io.hops.android.streams.storage.SQLiteNotInitialized;
 
 public class CoordinatesRecord extends Record{
@@ -13,6 +16,12 @@ public class CoordinatesRecord extends Record{
         this.longitude = longitude;
     }
 
+    public CoordinatesRecord(String coordinatesStr) throws SQLiteNotInitialized, JSONException {
+        JSONObject json = new JSONObject(coordinatesStr);
+        this.latitude = json.getDouble("latitude");
+        this.longitude = json.getDouble("longitude");
+    }
+
     public double getLatitude(){
         return this.latitude;
     }
@@ -21,4 +30,12 @@ public class CoordinatesRecord extends Record{
         return this.longitude;
     }
 
+
+    @Override
+    public String toString() {
+        return "CoordinatesRecord{" +
+                "latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
+    }
 }

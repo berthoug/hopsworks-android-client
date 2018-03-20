@@ -121,4 +121,16 @@ public abstract class Record implements Comparable<Record>{
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "Record{" +
+                "acked=" + acked +
+                ", bootNum=" + bootNum +
+                ", bootMillis=" + bootMillis +
+                ", epochMillis=" + epochMillis +
+                ", recordUUID='" + recordUUID + '\'' +
+                ", deviceUUID='" + deviceUUID + '\'' +
+                '}';
+    }
 }
