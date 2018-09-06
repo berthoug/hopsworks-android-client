@@ -4,13 +4,12 @@ dependencies {
     compile 'com.android.support:design:25.+'
 }
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
-
+    compileSdkVersion 28
+    buildToolsVersion '28.0.2'
     defaultConfig {
         applicationId "io.hops.android.center"
-        minSdkVersion 19
-        targetSdkVersion 25
+        minSdkVersion 28
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
@@ -27,7 +26,6 @@ android {
             debuggable true
         }
     }
-
     dependencies {
         compile project(':streams')
         compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -42,7 +40,6 @@ android {
 
         testCompile 'junit:junit:4.12'
     }
-
     packagingOptions {
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
@@ -51,5 +48,7 @@ android {
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/license'
         exclude 'META-INF/license.txt'
+    }
+    productFlavors {
     }
 }

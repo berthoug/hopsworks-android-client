@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -105,6 +106,11 @@ public class MainActivity extends Activity{
                 }
             }
         };
+
+        Intent discoverableIntent =
+                new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
+        startActivity(discoverableIntent);
 
         mBTAdapter = BluetoothAdapter.getDefaultAdapter(); // get a handle on the bluetooth radio
         if(!mBTAdapter.isEnabled()){
@@ -582,6 +588,15 @@ public class MainActivity extends Activity{
                     System.out.println("Hopsworks :: Intrabody.record-"+record);
                     record.save();
                     System.out.println("Hopsworks ::record-"+record + "  received via Bluetooth");
+                    String byte1 = "11010000";
+                    String byte2 = "00000000";
+                    String byte3 = "01010101";
+                    mmOutStream.write((byte1+byte2+byte3+"\r\n").getBytes());
+                    mmOutStream.flush();
+                    mHandler.obtainMessage(UPDATE_DISPLAY, "send ion-pump data to hardware").sendToTarget();
+                    mHandler.obtainMessage(UPDATE_DISPLAY, "byte1:"+byte1).sendToTarget();
+                    mHandler.obtainMessage(UPDATE_DISPLAY, "byte2:"+byte2).sendToTarget();
+                    mHandler.obtainMessage(UPDATE_DISPLAY, "byte3:"+byte3).sendToTarget();
 
                     //mHandler.obtainMessage(UPDATE_DISPLAY, " Bluetooth rcv record:"+record.getRecordUUID()).sendToTarget();
                     mHandler.obtainMessage(RECORD_RECEIVED, "").sendToTarget();
@@ -600,7 +615,9 @@ public class MainActivity extends Activity{
             byte[] bytes = input.getBytes();           //converts entered String into bytes
             try {
                 mmOutStream.write(bytes);
+                mmOutStream.flush();
             } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
@@ -609,6 +626,7 @@ public class MainActivity extends Activity{
             try {
                 mmSocket.close();
             } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
