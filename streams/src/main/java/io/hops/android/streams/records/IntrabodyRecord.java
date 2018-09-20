@@ -9,7 +9,7 @@ public class IntrabodyRecord extends Record {
 
     private int dvcId;
     private int channelId;
-    private float value;
+    private String value;
     private int unit;
     private long time;
 
@@ -18,12 +18,12 @@ public class IntrabodyRecord extends Record {
         JSONObject json = new JSONObject(record);
         this.dvcId = json.getInt("dvcId");
         this.channelId = json.getInt("channelId");
-        this.value = (float)json.getDouble("value");
+        this.value = json.getString("value");
         this.unit = json.getInt("unit");
         this.time =  json.getLong("time");
     }
 
-    public IntrabodyRecord(int dvcId, int channelId, float value, int unit, long time) throws SQLiteNotInitialized {
+    public IntrabodyRecord(int dvcId, int channelId, String value, int unit, long time) throws SQLiteNotInitialized {
         this.dvcId = dvcId;
         this.channelId = channelId;
         this.value = value;

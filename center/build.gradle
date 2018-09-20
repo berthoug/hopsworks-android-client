@@ -4,12 +4,12 @@ dependencies {
     compile 'com.android.support:design:25.+'
 }
 android {
-    compileSdkVersion 28
+    compileSdkVersion 25
     buildToolsVersion '28.0.2'
     defaultConfig {
         applicationId "io.hops.android.center"
-        minSdkVersion 28
-        targetSdkVersion 28
+        minSdkVersion 21
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
 

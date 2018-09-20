@@ -37,7 +37,6 @@ import io.hops.android.streams.hopsworks.HopsWorksClientBuilder;
 import io.hops.android.streams.hopsworks.HopsWorksResponse;
 import io.hops.android.streams.hopsworks.SchemaDTO;
 import io.hops.android.streams.hopsworks.TopicRecordsDTO;
-import io.hops.android.streams.records.AvroTemplate;
 import io.hops.android.streams.records.IntrabodyRecord;
 import io.hops.android.streams.records.Record;
 import io.hops.android.streams.storage.DeviceCredentials;
@@ -109,7 +108,7 @@ public class MainActivity extends Activity{
 
         Intent discoverableIntent =
                 new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
         startActivity(discoverableIntent);
 
         mBTAdapter = BluetoothAdapter.getDefaultAdapter(); // get a handle on the bluetooth radio
@@ -576,6 +575,7 @@ public class MainActivity extends Activity{
 
         public void run() {
             try {
+                System.out.println("Starting running");
                 String line;
                 while ((line = mmInStream.readLine()) != null && !line.isEmpty() && !line.equalsIgnoreCase("null")) {
                     // Read from the InputStream
