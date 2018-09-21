@@ -7,17 +7,50 @@
     tools:context="io.hops.android.center.MainActivity"
     tools:layout_editor_absoluteY="81dp">
 
+    <EditText
+        android:id="@+id/txtMessage"
+        android:layout_width="366dp"
+        android:layout_height="42dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="Enter ion-pump control packet here"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.658"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtServer" />
+
+    <Button
+        android:id="@+id/btnPump"
+        android:layout_width="76dp"
+        android:layout_height="31dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/button_background"
+        android:onClick="sendPumpData"
+        android:text="pump"
+        app:layout_constraintBottom_toTopOf="@+id/lblRecordsCount"
+        app:layout_constraintEnd_toEndOf="@+id/btnProduceInBackground"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/btnProduceInBackground"
+        app:layout_constraintTop_toBottomOf="@+id/btnProduceInBackground"
+        app:layout_constraintVertical_bias="0.0" />
+
     <Button
         android:id="@+id/btnSchema"
         android:layout_width="76dp"
         android:layout_height="50dp"
         android:layout_marginEnd="2dp"
         android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/button_background"
         android:onClick="getSchema"
         android:text="Get Schema"
         app:layout_constraintEnd_toStartOf="@+id/txtDisplay"
+        app:layout_constraintHorizontal_bias="0.35"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 
@@ -27,11 +60,12 @@
         android:layout_height="50dp"
         android:layout_marginEnd="2dp"
         android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="4dp"
         android:background="@drawable/button_background"
         android:onClick="login"
         android:text="Login"
         app:layout_constraintEnd_toStartOf="@+id/txtDisplay"
+        app:layout_constraintHorizontal_bias="0.35"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnRegister" />
 
@@ -41,13 +75,14 @@
         android:layout_height="50dp"
         android:layout_marginEnd="2dp"
         android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/button_background"
         android:onClick="register"
         android:text="Register"
         app:layout_constraintEnd_toStartOf="@+id/txtDisplay"
+        app:layout_constraintHorizontal_bias="0.341"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/txtDisplay" />
+        app:layout_constraintTop_toBottomOf="@+id/txtDisplayRegister" />
 
     <EditText
         android:id="@+id/txtAlias"
@@ -91,55 +126,48 @@
 
     <TextView
         android:id="@+id/lblRecords"
-        android:layout_width="76dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="33dp"
+        android:layout_height="31dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
         android:text="Rcv"
         android:textColor="@color/colorBlack"
-        app:layout_constraintEnd_toStartOf="@+id/txtDisplay"
-        app:layout_constraintHorizontal_bias="0.565"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnProduceInBackground" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/lblRecordsCount"
-        android:layout_width="42dp"
-        android:layout_height="20dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="26dp"
+        android:layout_height="29dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="12dp"
         android:textColor="@color/colorBlack"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/txtDisplay"
-        app:layout_constraintHorizontal_bias="0.391"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblRecords"
-        app:layout_constraintVertical_bias="0.411" />
+        app:layout_constraintStart_toEndOf="@+id/lblRecords" />
 
     <TextView
         android:id="@+id/txtDisplayRegister"
         android:layout_width="330dp"
-        android:layout_height="134dp"
+        android:layout_height="87dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:background="@color/colorBlack"
         android:maxLines="300"
         android:scrollbars="vertical"
         android:text=""
         android:textColor="@color/colorWhite"
         app:layout_constraintEnd_toEndOf="@+id/txtDisplay"
+        app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="@+id/btnRegister"
-        app:layout_constraintTop_toBottomOf="@+id/txtServer" />
+        app:layout_constraintTop_toBottomOf="@+id/txtMessage" />
 
     <TextView
         android:id="@+id/txtDisplay"
         android:layout_width="275dp"
         android:layout_height="347dp"
         android:layout_marginBottom="2dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="8dp"
         android:background="@color/colorBlack"
         android:maxLines="300"
@@ -148,7 +176,8 @@
         android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtDisplayRegister" />
+        app:layout_constraintTop_toBottomOf="@+id/txtDisplayRegister"
+        app:layout_constraintVertical_bias="0.8" />
 
     <Button
         android:id="@+id/btnProduce"
@@ -156,11 +185,12 @@
         android:layout_height="50dp"
         android:layout_marginEnd="2dp"
         android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/button_background"
         android:onClick="produce"
         android:text="Produce record"
         app:layout_constraintEnd_toStartOf="@+id/txtDisplay"
+        app:layout_constraintHorizontal_bias="0.358"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnSchema" />
 
@@ -170,11 +200,12 @@
         android:layout_height="50dp"
         android:layout_marginEnd="2dp"
         android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/button_background"
         android:onClick="streamInBackground"
         android:text="Start Stream"
         app:layout_constraintEnd_toStartOf="@+id/txtDisplay"
+        app:layout_constraintHorizontal_bias="0.35"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnProduce" />
 
@@ -194,14 +225,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="20dp" />
+        app:layout_constraintGuide_end="340dp" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="16dp" />
+        app:layout_constraintGuide_end="495dp" />
 
 </android.support.constraint.ConstraintLayout>
 

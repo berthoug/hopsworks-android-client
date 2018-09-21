@@ -2,6 +2,7 @@ package io.hops.android.center;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
@@ -60,6 +61,11 @@ public class MainActivity extends Activity{
     private ConnectedThread mConnectedThread; // bluetooth background worker thread to send and receive data
     private final String TAG = MainActivity.class.getSimpleName();
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"/*"00001101-0000-1000-8000-00805F9B34FA"*/); // "random" unique identifier
+    private BluetoothSocket tmp;
+    private BluetoothDevice deviceToConnect;
+    private OutputStream bw;
+    //Hardware device UUID
+    private static final UUID HWUUID = UUID.fromString("00001102-0000-1000-8000-00805f9b34fb"); // "random" unique identifier
 
     private final static int UPDATE_DISPLAY = 1;
     private final static int UPDATE_DISPLAY_REGISTER = 2;
@@ -122,6 +128,9 @@ public class MainActivity extends Activity{
         // Spawn a new thread to avoid blocking the GUI one
         AcceptThread accept = new AcceptThread();
         accept.start();
+
+
+
     }
 
     private void display(int displayId, String text){
@@ -162,6 +171,10 @@ public class MainActivity extends Activity{
 
     private String getServer(){
         return ((EditText) findViewById(R.id.txtServer)).getText().toString().trim();
+    }
+
+    private String getIonPumpMessage(){
+        return ((EditText) findViewById(R.id.txtMessage)).getText().toString().trim();
     }
 
     private void setRecordsView(){
@@ -384,6 +397,33 @@ public class MainActivity extends Activity{
         }
     }
 
+    public void sendPumpData(View view) throws IOException {
+        // Get a BluetoothSocket to connect with the given BluetoothDevice.
+        // MY_UUID is the app's UUID string, also used in the server code.
+        //tmp = mBTAdapter.getRemoteDevice("44:1C:A8:E2:23:6E").createInsecureRfcommSocketToServiceRecord(HWUUID);
+        //Start Bluetooth client
+        if(deviceToConnect == null){
+            deviceToConnect = mBTAdapter.getBondedDevices().iterator().next();
+            System.out.println("getAddress:"+ deviceToConnect.getAddress());
+        }
+        try {
+            if(tmp == null) {
+                tmp = deviceToConnect.createInsecureRfcommSocketToServiceRecord(HWUUID);
+                tmp.connect();
+                if(bw == null) {
+                    bw = tmp.getOutputStream();
+                }
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        bw.write((getIonPumpMessage()+"\r\n").getBytes());
+        bw.flush();
+        display(R.id.txtDisplay, "Sent to hw:" + getIonPumpMessage());
+
+    }
+
     public static void closeStreaming(Class cls){
         RecordStreamWorker recordStreamWorker = RecordStreamWorker.getInstance(cls);
         recordStreamWorker.close();
@@ -550,6 +590,24 @@ public class MainActivity extends Activity{
 
     }
 
+    private class ConnectedClientThread extends Thread {
+
+        public void run(){
+            OutputStream mmOutStream = null;
+            try {
+                mmOutStream = tmp.getOutputStream();
+                String byte1 = "11010000";
+                String byte2 = "00000000";
+                String byte3 = "01010101";
+                mmOutStream.write((getIonPumpMessage() + "\r\n").getBytes());
+                mmOutStream.flush();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final BufferedReader mmInStream;
@@ -588,15 +646,11 @@ public class MainActivity extends Activity{
                     System.out.println("Hopsworks :: Intrabody.record-"+record);
                     record.save();
                     System.out.println("Hopsworks ::record-"+record + "  received via Bluetooth");
-                    String byte1 = "11010000";
-                    String byte2 = "00000000";
-                    String byte3 = "01010101";
-                    mmOutStream.write((byte1+byte2+byte3+"\r\n").getBytes());
+
+                    mmOutStream.write((getIonPumpMessage()+"\r\n").getBytes());
                     mmOutStream.flush();
                     mHandler.obtainMessage(UPDATE_DISPLAY, "send ion-pump data to hardware").sendToTarget();
-                    mHandler.obtainMessage(UPDATE_DISPLAY, "byte1:"+byte1).sendToTarget();
-                    mHandler.obtainMessage(UPDATE_DISPLAY, "byte2:"+byte2).sendToTarget();
-                    mHandler.obtainMessage(UPDATE_DISPLAY, "byte3:"+byte3).sendToTarget();
+                    mHandler.obtainMessage(UPDATE_DISPLAY, "ion pump message:"+getIonPumpMessage()).sendToTarget();
 
                     //mHandler.obtainMessage(UPDATE_DISPLAY, " Bluetooth rcv record:"+record.getRecordUUID()).sendToTarget();
                     mHandler.obtainMessage(RECORD_RECEIVED, "").sendToTarget();
