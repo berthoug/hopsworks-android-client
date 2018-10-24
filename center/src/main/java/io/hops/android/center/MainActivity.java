@@ -664,6 +664,8 @@ public class MainActivity extends Activity{
         public void run() {
             try {
                 System.out.println("Starting running");
+                TextView tv = (TextView)findViewById(R.id.waiting);
+                tv.setVisibility(View.INVISIBLE);
                 String line;
                 while ((line = mmInStream.readLine()) != null && !line.isEmpty() && !line.equalsIgnoreCase("null")) {
                     // Read from the InputStream
