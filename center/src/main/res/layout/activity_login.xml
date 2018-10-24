@@ -11,9 +11,8 @@
         android:id="@+id/txtMessage"
         android:layout_width="366dp"
         android:layout_height="42dp"
-        android:layout_marginEnd="2dp"
         android:layout_marginStart="2dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="2dp"
         android:ems="10"
         android:hint="Enter ion-pump control packet here"
         android:inputType="textPersonName"
@@ -114,8 +113,8 @@
         android:id="@+id/txtServer"
         android:layout_width="366dp"
         android:layout_height="42dp"
-        android:layout_marginEnd="2dp"
         android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
         android:ems="10"
         android:hint="https://bbc2.sics.se:8080"
         android:inputType="textPersonName"
@@ -148,10 +147,10 @@
     <TextView
         android:id="@+id/txtDisplayRegister"
         android:layout_width="330dp"
-        android:layout_height="87dp"
-        android:layout_marginEnd="8dp"
+        android:layout_height="56dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:background="@color/colorBlack"
         android:maxLines="300"
         android:scrollbars="vertical"
@@ -165,10 +164,11 @@
     <TextView
         android:id="@+id/txtDisplay"
         android:layout_width="275dp"
-        android:layout_height="347dp"
-        android:layout_marginBottom="2dp"
-        android:layout_marginEnd="16dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@color/colorBlack"
         android:maxLines="300"
         android:scrollbars="vertical"
@@ -176,8 +176,21 @@
         android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtDisplayRegister"
-        app:layout_constraintVertical_bias="0.8" />
+        app:layout_constraintStart_toStartOf="@+id/imageDisplay"
+        app:layout_constraintTop_toBottomOf="@+id/imageDisplay" />
+
+    <ImageView
+        android:id="@+id/imageDisplay"
+        android:layout_width="275dp"
+        android:layout_height="341dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:maxLines="300"
+        android:scrollbars="vertical"
+        android:text="Waiting for gesture..."
+        android:textColor="@color/colorWhite"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtDisplayRegister" />
 
     <Button
         android:id="@+id/btnProduce"

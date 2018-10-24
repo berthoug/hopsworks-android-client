@@ -16,10 +16,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -70,6 +72,7 @@ public class MainActivity extends Activity{
     private final static int UPDATE_DISPLAY = 1;
     private final static int UPDATE_DISPLAY_REGISTER = 2;
     private final static int RECORD_RECEIVED = 2;
+    private final static int UPDATE_GESTURE = 3;
 
 
 
@@ -108,6 +111,33 @@ public class MainActivity extends Activity{
                     System.out.println("Hopsworks :: RECORD_RECEIVED-"+recordsReceived);
                     recordsReceived++;
                     setRecordsView();
+                }
+                if (msg.what == UPDATE_GESTURE) {
+                    int gesture = Integer.parseInt(String.valueOf(msg.obj));
+                    switch(gesture){
+                        case 0:
+                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.finger0);
+                            break;
+                        case 1:
+                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.finger1);
+                            break;
+                        case 2:
+                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.finger2);
+                            break;
+                        case 3:
+                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.finger3);
+                            break;
+                        case 4:
+                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.finger4);
+                            break;
+                        case 5:
+                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.horns);
+                            break;
+                        default:
+                            mHandler.obtainMessage(UPDATE_DISPLAY, "gesture value was not within accepted range").sendToTarget();
+                            break;
+
+                    }
                 }
             }
         };
@@ -153,8 +183,8 @@ public class MainActivity extends Activity{
 
     }
 
-    private TextView getDisplay(int displayId){
-        return (TextView)findViewById(displayId);
+    private View getDisplay(int displayId){
+        return findViewById(displayId);
     }
 
     private String getProjectName() {
@@ -638,11 +668,13 @@ public class MainActivity extends Activity{
                 while ((line = mmInStream.readLine()) != null && !line.isEmpty() && !line.equalsIgnoreCase("null")) {
                     // Read from the InputStream
                     SystemClock.sleep(100); //pause and wait for rest of data. Adjust this depending on your sending speed.
-                                        //Create record and persist it to local storage SQLLite. Stream thread
                     //will pick it up and send it to Hopsworks
                     System.out.println("Hopsworks :: line-"+line);
                     mHandler.obtainMessage(UPDATE_DISPLAY, "message:"+line).sendToTarget();
                     IntrabodyRecord record = new IntrabodyRecord(line);
+                    int gesture = Integer.parseInt(new JSONObject(record.getValue()).getString("gesture"));
+                    System.out.println("Hopsworks :: gesture-"+gesture);
+                    mHandler.obtainMessage(UPDATE_GESTURE, gesture).sendToTarget();
                     System.out.println("Hopsworks :: Intrabody.record-"+record);
                     record.save();
                     System.out.println("Hopsworks ::record-"+record + "  received via Bluetooth");

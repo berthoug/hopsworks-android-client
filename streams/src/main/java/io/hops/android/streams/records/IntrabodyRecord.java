@@ -41,4 +41,8 @@ public class IntrabodyRecord extends Record {
                 ", time=" + time +
                 '}';
     }
+
+    public String getValue() {
+        return value;
+    }
 }
