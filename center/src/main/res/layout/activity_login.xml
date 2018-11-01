@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="io.hops.android.center.MainActivity"
-    tools:layout_editor_absoluteY="81dp">
+    tools:layout_editor_absoluteY="81dp"
+    android:background="@android:color/white">
 
     <TextView
         android:id="@+id/waiting"
@@ -214,10 +215,10 @@
         android:layout_marginTop="52dp"
         android:layout_marginEnd="68dp"
         android:layout_marginBottom="8dp"
-        android:maxLines="300"
+        android:maxLines="800"
         android:scrollbars="vertical"
+        android:background="@android:color/white"
         android:text="Waiting for gesture..."
-        android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.072"

@@ -21,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -115,23 +114,23 @@ public class MainActivity extends Activity{
                 if (msg.what == UPDATE_GESTURE) {
                     int gesture = Integer.parseInt(String.valueOf(msg.obj));
                     switch(gesture){
-                        case 0:
-                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.finger0);
-                            break;
                         case 1:
-                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.finger1);
+                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.rps1);
                             break;
                         case 2:
-                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.finger2);
+                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.rps2);
                             break;
                         case 3:
-                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.finger3);
+                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.rps3);
                             break;
                         case 4:
-                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.finger4);
+                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.rps4);
                             break;
                         case 5:
-                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.horns);
+                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.rps5);
+                            break;
+                        case 6:
+                            ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.rps6);
                             break;
                         default:
                             mHandler.obtainMessage(UPDATE_DISPLAY, "gesture value was not within accepted range").sendToTarget();
@@ -396,8 +395,6 @@ public class MainActivity extends Activity{
             });
         } catch (SQLiteNotInitialized sqliteNotInitialized) {
             display(R.id.txtDisplay, sqliteNotInitialized.getMessage());
-        } catch (JSONException e) {
-            display(R.id.txtDisplay, e.getMessage());
         }
     }
 
@@ -487,8 +484,6 @@ public class MainActivity extends Activity{
                 getDisplay(R.id.txtDisplay).post(new DisplayTask(record.getRecordUUID() + " pro"));
             } catch (SQLiteNotInitialized SQLiteNotInitialized) {
                 display(R.id.txtDisplay, SQLiteNotInitialized.getMessage());
-            } catch (JSONException e) {
-                display(R.id.txtDisplay, e.getMessage());
             }
         }
     }
@@ -674,9 +669,8 @@ public class MainActivity extends Activity{
                     System.out.println("Hopsworks :: line-"+line);
                     mHandler.obtainMessage(UPDATE_DISPLAY, "message:"+line).sendToTarget();
                     IntrabodyRecord record = new IntrabodyRecord(line);
-                    int gesture = Integer.parseInt(new JSONObject(record.getValue()).getString("gesture"));
-                    System.out.println("Hopsworks :: gesture-"+gesture);
-                    mHandler.obtainMessage(UPDATE_GESTURE, gesture).sendToTarget();
+                    System.out.println("Hopsworks :: gesture-"+record.getgRPS());
+                    mHandler.obtainMessage(UPDATE_GESTURE, record.getgRPS()).sendToTarget();
                     System.out.println("Hopsworks :: Intrabody.record-"+record);
                     record.save();
                     System.out.println("Hopsworks ::record-"+record + "  received via Bluetooth");
@@ -692,8 +686,6 @@ public class MainActivity extends Activity{
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (SQLiteNotInitialized e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }

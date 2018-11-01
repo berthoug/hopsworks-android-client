@@ -1,48 +1,48 @@
 package io.hops.android.streams.records;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.Arrays;
 
 import io.hops.android.streams.storage.SQLiteNotInitialized;
 
 public class IntrabodyRecord extends Record {
 
-    private int dvcId;
-    private int channelId;
-    private String value;
-    private int unit;
-    private long time;
+    private float temp;
+    private float humidity;
+    private int gRPS ;
+    private int[] gStrech;
 
-    public IntrabodyRecord(String record) throws SQLiteNotInitialized, JSONException {
-        super();
-        JSONObject json = new JSONObject(record);
-        this.dvcId = json.getInt("dvcId");
-        this.channelId = json.getInt("channelId");
-        this.value = json.getString("value");
-        this.unit = json.getInt("unit");
-        this.time =  json.getLong("time");
+    public IntrabodyRecord(String gloveRecord) throws SQLiteNotInitialized {
+        String[] data = gloveRecord.split(",");
+        this.temp = Float.parseFloat(data[0].trim());
+        this.humidity = Float.parseFloat(data[1].trim());
+        this.gRPS = Integer.parseInt(data[2].trim());
+        this.gStrech = new int[]{Integer.parseInt(data[3].trim()), Integer.parseInt(data[4].trim()),
+                Integer.parseInt(data[5].trim()), Integer.parseInt(data[6].trim())};
     }
 
-    public IntrabodyRecord(int dvcId, int channelId, String value, int unit, long time) throws SQLiteNotInitialized {
-        this.dvcId = dvcId;
-        this.channelId = channelId;
-        this.value = value;
-        this.unit = unit;
-        this.time = time;
+    public float getTemp() {
+        return temp;
+    }
+
+    public float getHumidity() {
+        return humidity;
+    }
+
+    public int getgRPS() {
+        return gRPS;
+    }
+
+    public int[] getgStrech() {
+        return gStrech;
     }
 
     @Override
     public String toString() {
         return "IntrabodyRecord{" +
-                "dvcId=" + dvcId +
-                ", channelId=" + channelId +
-                ", value=" + value +
-                ", unit=" + unit +
-                ", time=" + time +
+                "temp=" + temp +
+                ", humidity=" + humidity +
+                ", gRPS=" + gRPS +
+                ", gStrech=" + Arrays.toString(gStrech) +
                 '}';
-    }
-
-    public String getValue() {
-        return value;
     }
 }
