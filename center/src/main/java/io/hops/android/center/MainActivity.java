@@ -26,6 +26,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -440,9 +443,32 @@ public class MainActivity extends Activity{
         try {
             if (tmp == null) {
                 tmp = deviceToConnect.createInsecureRfcommSocketToServiceRecord(HWUUID);
-                tmp.connect();
-                mHandler.obtainMessage(UPDATE_DISPLAY,
-                        "Connected to MAC:" + deviceToConnect.getAddress()).sendToTarget();
+
+                try {
+                    tmp.connect();
+                    mHandler.obtainMessage(UPDATE_DISPLAY,
+                            "Connected to MAC:" + deviceToConnect.getAddress()).sendToTarget();
+                } catch (IOException e) {
+                    try {
+                        mHandler.obtainMessage(UPDATE_DISPLAY, "Trying fallback..").sendToTarget();
+                        tmp =(BluetoothSocket) deviceToConnect.getClass().getMethod("createInsecureRfcommSocket", new Class[] {int.class}).invoke(deviceToConnect,1);
+                        tmp.connect();
+
+                        mHandler.obtainMessage(UPDATE_DISPLAY,
+                                "Connected to MAC:" + deviceToConnect.getAddress()).sendToTarget();
+                    }
+                    catch (Exception e2) {
+                        Writer writer = new StringWriter();
+                        e.printStackTrace(new PrintWriter(writer));
+                        String stacktrace = writer.toString();
+                        mHandler.obtainMessage(UPDATE_DISPLAY,
+                                "Error connecting to device:" + deviceToConnect.getName()
+                                        + " with MAC: " + deviceToConnect.getAddress()
+                                        + ", error: " + e.getMessage() + "\nstacktrace:"+stacktrace).sendToTarget();
+                    }
+
+                }
+
                 if (bw == null) {
                     bw = tmp.getOutputStream();
                 }
@@ -463,8 +489,13 @@ public class MainActivity extends Activity{
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Writer writer = new StringWriter();
+            e.printStackTrace(new PrintWriter(writer));
+            String stacktrace = writer.toString();
             mHandler.obtainMessage(UPDATE_DISPLAY,
-                    "Error connecting to MAC:" + deviceToConnect.getAddress() + ", error:" + e.getMessage()).sendToTarget();
+                    "Error connecting to device:" + deviceToConnect.getName()
+                            + " with MAC: " + deviceToConnect.getAddress()
+                            + ", error: " + e.getMessage() + "\nstacktrace:"+stacktrace).sendToTarget();
         }
 
 
