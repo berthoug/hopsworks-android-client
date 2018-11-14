@@ -66,7 +66,8 @@ public class MainActivity extends Activity{
     private BluetoothDevice deviceToConnect;
     private OutputStream bw;
     //Hardware device UUID
-    private static final UUID HWUUID = UUID.fromString("00001102-0000-1000-8000-00805f9b34fb"); // "random" unique identifier
+    // "random" unique identifier
+    private static final UUID HWUUID = UUID.fromString("00001102-0000-1000-8000-00805f9b34fb");
 
     private final static int UPDATE_DISPLAY = 1;
     private final static int UPDATE_DISPLAY_REGISTER = 2;
@@ -424,30 +425,48 @@ public class MainActivity extends Activity{
         }
     }
 
-    public void sendPumpData(View view) throws IOException {
+    public void connectToBodycom(View view) throws IOException {
         // Get a BluetoothSocket to connect with the given BluetoothDevice.
         // MY_UUID is the app's UUID string, also used in the server code.
         //tmp = mBTAdapter.getRemoteDevice("44:1C:A8:E2:23:6E").createInsecureRfcommSocketToServiceRecord(HWUUID);
         //Start Bluetooth client
         if(deviceToConnect == null){
+            //Get device to connect to
             deviceToConnect = mBTAdapter.getBondedDevices().iterator().next();
             System.out.println("getAddress:"+ deviceToConnect.getAddress());
+            mHandler.obtainMessage(UPDATE_DISPLAY,
+                    "Connecting to MAC:" + deviceToConnect.getAddress()).sendToTarget();
         }
         try {
-            if(tmp == null) {
+            if (tmp == null) {
                 tmp = deviceToConnect.createInsecureRfcommSocketToServiceRecord(HWUUID);
                 tmp.connect();
-                if(bw == null) {
+                mHandler.obtainMessage(UPDATE_DISPLAY,
+                        "Connected to MAC:" + deviceToConnect.getAddress()).sendToTarget();
+                if (bw == null) {
                     bw = tmp.getOutputStream();
+                }
+                if (bw != null) {
+                    //bw.write((getIonPumpMessage()+"\r\n").getBytes());
+                    bw.write("hello\r\n".getBytes());
+                    bw.flush();
+                    mHandler.obtainMessage(UPDATE_DISPLAY, "Sent hello to bodycom").sendToTarget();
+                    if (tmp != null) {
+                        mConnectedThread = new ConnectedThread(tmp);
+                        mConnectedThread.start();
+                    }
+                } else {
+                    mHandler.obtainMessage(UPDATE_DISPLAY,
+                            "Could not connect to bodycom. Make sure only device is bonded with phone").sendToTarget();
                 }
 
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            mHandler.obtainMessage(UPDATE_DISPLAY,
+                    "Error connecting to MAC:" + deviceToConnect.getAddress() + ", error:" + e.getMessage()).sendToTarget();
         }
-        bw.write((getIonPumpMessage()+"\r\n").getBytes());
-        bw.flush();
-        display(R.id.txtDisplay, "Sent to hw:" + getIonPumpMessage());
+
 
     }
 
@@ -667,18 +686,18 @@ public class MainActivity extends Activity{
                     SystemClock.sleep(100); //pause and wait for rest of data. Adjust this depending on your sending speed.
                     //will pick it up and send it to Hopsworks
                     System.out.println("Hopsworks :: line-"+line);
-                    mHandler.obtainMessage(UPDATE_DISPLAY, "message:"+line).sendToTarget();
+                    mHandler.obtainMessage(UPDATE_DISPLAY, "Received bodycom line:" + line).sendToTarget();
                     IntrabodyRecord record = new IntrabodyRecord(line);
                     System.out.println("Hopsworks :: gesture-"+record.getgRPS());
                     mHandler.obtainMessage(UPDATE_GESTURE, record.getgRPS()).sendToTarget();
                     System.out.println("Hopsworks :: Intrabody.record-"+record);
                     record.save();
-                    System.out.println("Hopsworks ::record-"+record + "  received via Bluetooth");
-
-                    mmOutStream.write((getIonPumpMessage()+"\r\n").getBytes());
-                    mmOutStream.flush();
-                    mHandler.obtainMessage(UPDATE_DISPLAY, "send ion-pump data to hardware").sendToTarget();
-                    mHandler.obtainMessage(UPDATE_DISPLAY, "ion pump message:"+getIonPumpMessage()).sendToTarget();
+                    System.out.println("Hopsworks ::record-");
+                    mHandler.obtainMessage(UPDATE_DISPLAY, record + "  received via Bluetooth").sendToTarget();
+//                    mmOutStream.write((getIonPumpMessage()+"\r\n").getBytes());
+//                    mmOutStream.flush();
+//                    mHandler.obtainMessage(UPDATE_DISPLAY, "send ion-pump data to hardware").sendToTarget();
+//                    mHandler.obtainMessage(UPDATE_DISPLAY, "ion pump message:"+getIonPumpMessage()).sendToTarget();
 
                     //mHandler.obtainMessage(UPDATE_DISPLAY, " Bluetooth rcv record:"+record.getRecordUUID()).sendToTarget();
                     mHandler.obtainMessage(RECORD_RECEIVED, "").sendToTarget();
