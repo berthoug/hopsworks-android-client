@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ParcelUuid;
 import android.os.SystemClock;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -64,13 +65,13 @@ public class MainActivity extends Activity{
     private BluetoothAdapter mBTAdapter;
     private ConnectedThread mConnectedThread; // bluetooth background worker thread to send and receive data
     private final String TAG = MainActivity.class.getSimpleName();
-    private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"/*"00001101-0000-1000-8000-00805F9B34FA"*/); // "random" unique identifier
+    private static final UUID HWUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"/*"00001101-0000-1000-8000-00805F9B34FA"*/); // "random" unique identifier
     private BluetoothSocket tmp;
     private BluetoothDevice deviceToConnect;
     private OutputStream bw;
     //Hardware device UUID
     // "random" unique identifier
-    private static final UUID HWUUID = UUID.fromString("00001102-0000-1000-8000-00805f9b34fb");
+    private static final UUID BTMODULEUUID = UUID.fromString("00001102-0000-1000-8000-00805f9b34fb");
 
     private final static int UPDATE_DISPLAY = 1;
     private final static int UPDATE_DISPLAY_REGISTER = 2;
@@ -159,8 +160,8 @@ public class MainActivity extends Activity{
 
         //Start Bluetooth server
         // Spawn a new thread to avoid blocking the GUI one
-        AcceptThread accept = new AcceptThread();
-        accept.start();
+//        AcceptThread accept = new AcceptThread();
+//        accept.start();
 
 
 
@@ -433,16 +434,27 @@ public class MainActivity extends Activity{
         // MY_UUID is the app's UUID string, also used in the server code.
         //tmp = mBTAdapter.getRemoteDevice("44:1C:A8:E2:23:6E").createInsecureRfcommSocketToServiceRecord(HWUUID);
         //Start Bluetooth client
+        /* Before we connect, make sure to cancel any discovery! */
+        if (mBTAdapter.isDiscovering()) {
+            mBTAdapter.cancelDiscovery();
+            Log.i(TAG, "Cancelled ongoing discovery");
+            mHandler.obtainMessage(UPDATE_DISPLAY,"Cancelled ongoing discovery").sendToTarget();
+        }
         if(deviceToConnect == null){
             //Get device to connect to
+            //deviceToConnect = mBTAdapter.getRemoteDevice("44:1C:A8:E2:23:6E");
             deviceToConnect = mBTAdapter.getBondedDevices().iterator().next();
+
             System.out.println("getAddress:"+ deviceToConnect.getAddress());
             mHandler.obtainMessage(UPDATE_DISPLAY,
                     "Connecting to MAC:" + deviceToConnect.getAddress()).sendToTarget();
+            for(ParcelUuid uuid : deviceToConnect.getUuids()) {
+                mHandler.obtainMessage(UPDATE_DISPLAY, "deviceToConnect uuid:" + uuid.toString()).sendToTarget();
+            }
         }
         try {
             if (tmp == null) {
-                tmp = deviceToConnect.createInsecureRfcommSocketToServiceRecord(HWUUID);
+                tmp = deviceToConnect.createRfcommSocketToServiceRecord(HWUUID);
 
                 try {
                     tmp.connect();
@@ -451,7 +463,7 @@ public class MainActivity extends Activity{
                 } catch (IOException e) {
                     try {
                         mHandler.obtainMessage(UPDATE_DISPLAY, "Trying fallback..").sendToTarget();
-                        tmp =(BluetoothSocket) deviceToConnect.getClass().getMethod("createInsecureRfcommSocket", new Class[] {int.class}).invoke(deviceToConnect,1);
+                        tmp =(BluetoothSocket) deviceToConnect.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(deviceToConnect,1);
                         tmp.connect();
 
                         mHandler.obtainMessage(UPDATE_DISPLAY,
