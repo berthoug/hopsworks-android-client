@@ -13,7 +13,7 @@ public class IntrabodyRecord extends Record {
 
     public IntrabodyRecord(String gloveRecord) throws SQLiteNotInitialized {
         String[] data = gloveRecord.split(",");
-        this.temp = Float.parseFloat(data[0].trim());
+        //this.temp = Float.parseFloat(data[0].trim());
         this.humidity = Float.parseFloat(data[1].trim());
         this.gRPS = Integer.parseInt(data[2].trim());
         this.gStrech = new int[]{Integer.parseInt(data[3].trim()), Integer.parseInt(data[4].trim()),

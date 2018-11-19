@@ -138,7 +138,7 @@ public class MainActivity extends Activity{
                             ((ImageView)getDisplay(R.id.imageDisplay)).setImageResource(R.drawable.rps6);
                             break;
                         default:
-                            mHandler.obtainMessage(UPDATE_DISPLAY, "gesture value was not within accepted range").sendToTarget();
+                            mHandler.obtainMessage(UPDATE_DISPLAY, "gesture value was not within accepted range " + gesture).sendToTarget();
                             break;
 
                     }
@@ -430,6 +430,8 @@ public class MainActivity extends Activity{
     }
 
     public void connectToBodycom(View view) throws IOException {
+        System.out.println("################################################################################################################################");
+        mHandler.obtainMessage(UPDATE_DISPLAY, "start connectToBodycom").sendToTarget();
         // Get a BluetoothSocket to connect with the given BluetoothDevice.
         // MY_UUID is the app's UUID string, also used in the server code.
         //tmp = mBTAdapter.getRemoteDevice("44:1C:A8:E2:23:6E").createInsecureRfcommSocketToServiceRecord(HWUUID);
@@ -442,8 +444,9 @@ public class MainActivity extends Activity{
         }
         if(deviceToConnect == null){
             //Get device to connect to
-            //deviceToConnect = mBTAdapter.getRemoteDevice("44:1C:A8:E2:23:6E");
-            deviceToConnect = mBTAdapter.getBondedDevices().iterator().next();
+            mHandler.obtainMessage(UPDATE_DISPLAY, "getting remote device..").sendToTarget();
+            deviceToConnect = mBTAdapter.getRemoteDevice("00:06:66:67:54:D0");
+            //deviceToConnect = mBTAdapter.getBondedDevices().iterator().next();
 
             System.out.println("getAddress:"+ deviceToConnect.getAddress());
             mHandler.obtainMessage(UPDATE_DISPLAY,
@@ -452,65 +455,132 @@ public class MainActivity extends Activity{
                 mHandler.obtainMessage(UPDATE_DISPLAY, "deviceToConnect uuid:" + uuid.toString()).sendToTarget();
             }
         }
-        try {
-            if (tmp == null) {
-                tmp = deviceToConnect.createRfcommSocketToServiceRecord(HWUUID);
+        while(true) {
+            mHandler.obtainMessage(UPDATE_DISPLAY, "Trying to connect..").sendToTarget();
+            try {
+                if (tmp == null) {
+                    tmp = deviceToConnect.createRfcommSocketToServiceRecord(HWUUID);
 
-                try {
-                    tmp.connect();
-                    mHandler.obtainMessage(UPDATE_DISPLAY,
-                            "Connected to MAC:" + deviceToConnect.getAddress()).sendToTarget();
-                } catch (IOException e) {
                     try {
-                        mHandler.obtainMessage(UPDATE_DISPLAY, "Trying fallback..").sendToTarget();
-                        tmp =(BluetoothSocket) deviceToConnect.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(deviceToConnect,1);
                         tmp.connect();
-
                         mHandler.obtainMessage(UPDATE_DISPLAY,
                                 "Connected to MAC:" + deviceToConnect.getAddress()).sendToTarget();
+
+                    } catch (IOException e) {
+                        try {
+                            mHandler.obtainMessage(UPDATE_DISPLAY, "Trying fallback..").sendToTarget();
+                            tmp = (BluetoothSocket) deviceToConnect.getClass().getMethod("createRfcommSocket", new Class[]{int.class}).invoke(deviceToConnect, 1);
+                            tmp.connect();
+
+                            mHandler.obtainMessage(UPDATE_DISPLAY,
+                                    "Connected to MAC:" + deviceToConnect.getAddress()).sendToTarget();
+
+                        } catch (Exception e2) {
+                            Writer writer = new StringWriter();
+                            e.printStackTrace(new PrintWriter(writer));
+                            String stacktrace = writer.toString();
+                            mHandler.obtainMessage(UPDATE_DISPLAY,
+                                    "Error connecting to device:" + deviceToConnect.getName()
+                                            + " with MAC: " + deviceToConnect.getAddress()
+                                            + ", error: " + e.getMessage() + "\nstacktrace:" + stacktrace).sendToTarget();
+                        }
+
                     }
-                    catch (Exception e2) {
-                        Writer writer = new StringWriter();
-                        e.printStackTrace(new PrintWriter(writer));
-                        String stacktrace = writer.toString();
+
+                    if (bw == null) {
+                        bw = tmp.getOutputStream();
+                    }
+                    if (bw != null) {
+                        //bw.write((getIonPumpMessage()+"\r\n").getBytes());
+                        bw.write("hello\r\n".getBytes());
+                        bw.flush();
+                        mHandler.obtainMessage(UPDATE_DISPLAY, "Sent hello to bodycom").sendToTarget();
+                        if (tmp != null) {
+                            mConnectedThread = new ConnectedThread(tmp);
+                            mConnectedThread.start();
+                        }
+                        break;
+                    } else {
                         mHandler.obtainMessage(UPDATE_DISPLAY,
-                                "Error connecting to device:" + deviceToConnect.getName()
-                                        + " with MAC: " + deviceToConnect.getAddress()
-                                        + ", error: " + e.getMessage() + "\nstacktrace:"+stacktrace).sendToTarget();
+                                "Could not connect to bodycom. Make sure only device is bonded with phone").sendToTarget();
                     }
 
                 }
 
-                if (bw == null) {
-                    bw = tmp.getOutputStream();
-                }
-                if (bw != null) {
-                    //bw.write((getIonPumpMessage()+"\r\n").getBytes());
-                    bw.write("hello\r\n".getBytes());
-                    bw.flush();
-                    mHandler.obtainMessage(UPDATE_DISPLAY, "Sent hello to bodycom").sendToTarget();
-                    if (tmp != null) {
-                        mConnectedThread = new ConnectedThread(tmp);
-                        mConnectedThread.start();
-                    }
-                } else {
-                    mHandler.obtainMessage(UPDATE_DISPLAY,
-                            "Could not connect to bodycom. Make sure only device is bonded with phone").sendToTarget();
-                }
-
+            } catch (Exception e) {
+                e.printStackTrace();
+                Writer writer = new StringWriter();
+                e.printStackTrace(new PrintWriter(writer));
+                String stacktrace = writer.toString();
+                mHandler.obtainMessage(UPDATE_DISPLAY,
+                        "Error connecting to device:" + deviceToConnect.getName()
+                                + " with MAC: " + deviceToConnect.getAddress()
+                                + ", error: " + e.getMessage() + "\nstacktrace:" + stacktrace).sendToTarget();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Writer writer = new StringWriter();
-            e.printStackTrace(new PrintWriter(writer));
-            String stacktrace = writer.toString();
-            mHandler.obtainMessage(UPDATE_DISPLAY,
-                    "Error connecting to device:" + deviceToConnect.getName()
-                            + " with MAC: " + deviceToConnect.getAddress()
-                            + ", error: " + e.getMessage() + "\nstacktrace:"+stacktrace).sendToTarget();
+
         }
+    }
+
+    public BluetoothSocket reconnect(){
+        bw=null;
+        while(true) {
+            try {
+
+                    try {
+                        tmp.connect();
+                        mHandler.obtainMessage(UPDATE_DISPLAY,
+                                "Connected to MAC:" + deviceToConnect.getAddress()).sendToTarget();
+
+                    } catch (IOException e) {
+                        //try {
+                        //    mHandler.obtainMessage(UPDATE_DISPLAY, "Trying fallback..").sendToTarget();
+                        //    tmp = (BluetoothSocket) deviceToConnect.getClass().getMethod("createRfcommSocket", new Class[]{int.class}).invoke(deviceToConnect, 1);
+                        //    tmp.connect();
+
+  //                          mHandler.obtainMessage(UPDATE_DISPLAY,
+    //                                "Connected to MAC:" + deviceToConnect.getAddress()).sendToTarget();
+
+      //                  } catch (Exception e2) {
+                            Writer writer = new StringWriter();
+                            e.printStackTrace(new PrintWriter(writer));
+                            String stacktrace = writer.toString();
+                            mHandler.obtainMessage(UPDATE_DISPLAY,
+                                    "Error connecting to device:" + deviceToConnect.getName()
+                                            + " with MAC: " + deviceToConnect.getAddress()
+                                            + ", error: " + e.getMessage() + "\nstacktrace:" + stacktrace).sendToTarget();
+        //                }
+
+                    }
+
+                    if (bw == null) {
+                        bw = tmp.getOutputStream();
+                    }
+                    if (bw != null) {
+                        //bw.write((getIonPumpMessage()+"\r\n").getBytes());
+                        bw.write("hello\r\n".getBytes());
+                        bw.flush();
+                        mHandler.obtainMessage(UPDATE_DISPLAY, "Sent hello to bodycom").sendToTarget();
+
+                        return tmp;
+                    } else {
+                        mHandler.obtainMessage(UPDATE_DISPLAY,
+                                "Could not connect to bodycom. Make sure only device is bonded with phone").sendToTarget();
+                    }
 
 
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Writer writer = new StringWriter();
+                e.printStackTrace(new PrintWriter(writer));
+                String stacktrace = writer.toString();
+                mHandler.obtainMessage(UPDATE_DISPLAY,
+                        "Error connecting to device:" + deviceToConnect.getName()
+                                + " with MAC: " + deviceToConnect.getAddress()
+                                + ", error: " + e.getMessage() + "\nstacktrace:" + stacktrace).sendToTarget();
+            }
+
+        }
     }
 
     public static void closeStreaming(Class cls){
@@ -696,9 +766,9 @@ public class MainActivity extends Activity{
     }
 
     private class ConnectedThread extends Thread {
-        private final BluetoothSocket mmSocket;
-        private final BufferedReader mmInStream;
-        private final OutputStream mmOutStream;
+        private  BluetoothSocket mmSocket;
+        private  BufferedReader mmInStream;
+        private  OutputStream mmOutStream;
 
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
@@ -722,33 +792,76 @@ public class MainActivity extends Activity{
             try {
                 System.out.println("Starting running");
                 TextView tv = (TextView)findViewById(R.id.waiting);
-                tv.setVisibility(View.INVISIBLE);
+                //tv.setVisibility(View.INVISIBLE);
                 String line;
-                while ((line = mmInStream.readLine()) != null && !line.isEmpty() && !line.equalsIgnoreCase("null")) {
-                    // Read from the InputStream
-                    SystemClock.sleep(100); //pause and wait for rest of data. Adjust this depending on your sending speed.
-                    //will pick it up and send it to Hopsworks
-                    System.out.println("Hopsworks :: line-"+line);
+                while (true) {
+                    try{
+                    mHandler.obtainMessage(UPDATE_DISPLAY, "begining of loop").sendToTarget();
+                    line = mmInStream.readLine();
                     mHandler.obtainMessage(UPDATE_DISPLAY, "Received bodycom line:" + line).sendToTarget();
-                    IntrabodyRecord record = new IntrabodyRecord(line);
-                    System.out.println("Hopsworks :: gesture-"+record.getgRPS());
-                    mHandler.obtainMessage(UPDATE_GESTURE, record.getgRPS()).sendToTarget();
-                    System.out.println("Hopsworks :: Intrabody.record-"+record);
-                    record.save();
-                    System.out.println("Hopsworks ::record-");
-                    mHandler.obtainMessage(UPDATE_DISPLAY, record + "  received via Bluetooth").sendToTarget();
+                    if ((line) != null && !line.isEmpty() && !line.equalsIgnoreCase("null")) {
+                        mHandler.obtainMessage(UPDATE_DISPLAY, "in if").sendToTarget();
+                        // Read from the InputStream
+                        SystemClock.sleep(100); //pause and wait for rest of data. Adjust this depending on your sending speed.
+                        //will pick it up and send it to Hopsworks
+                        System.out.println("Hopsworks :: line-" + line);
+                        mHandler.obtainMessage(UPDATE_DISPLAY, "Received bodycom line:" + line).sendToTarget();
+                        IntrabodyRecord record = new IntrabodyRecord(line);
+                        System.out.println("Hopsworks :: gesture-" + record.getgRPS());
+                        mHandler.obtainMessage(UPDATE_GESTURE, record.getgRPS()).sendToTarget();
+                        System.out.println("Hopsworks :: Intrabody.record-" + record);
+                        //record.save();
+                        System.out.println("Hopsworks ::record-");
+                        mHandler.obtainMessage(UPDATE_DISPLAY, record + "  received via Bluetooth").sendToTarget();
 //                    mmOutStream.write((getIonPumpMessage()+"\r\n").getBytes());
 //                    mmOutStream.flush();
 //                    mHandler.obtainMessage(UPDATE_DISPLAY, "send ion-pump data to hardware").sendToTarget();
 //                    mHandler.obtainMessage(UPDATE_DISPLAY, "ion pump message:"+getIonPumpMessage()).sendToTarget();
 
-                    //mHandler.obtainMessage(UPDATE_DISPLAY, " Bluetooth rcv record:"+record.getRecordUUID()).sendToTarget();
-                    mHandler.obtainMessage(RECORD_RECEIVED, "").sendToTarget();
+                        //mHandler.obtainMessage(UPDATE_DISPLAY, " Bluetooth rcv record:"+record.getRecordUUID()).sendToTarget();
+                        mHandler.obtainMessage(RECORD_RECEIVED, "").sendToTarget();
+                    }
+                    mHandler.obtainMessage(UPDATE_DISPLAY, "end of loop").sendToTarget();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Writer writer = new StringWriter();
+                        e.printStackTrace(new PrintWriter(writer));
+                        String stacktrace = writer.toString();
+                        mHandler.obtainMessage(UPDATE_DISPLAY,
+                                "Exception with device:" + deviceToConnect.getName()
+                                        + " with MAC: " + deviceToConnect.getAddress()
+                                        + ", error: " + e.getMessage() + "\nstacktrace:"+stacktrace).sendToTarget();
+
+                        mmSocket = reconnect();
+                        BufferedReader tmpIn = null;
+                        OutputStream tmpOut = null;
+                        try {
+                            System.out.println("Initializing stream");
+                            tmpIn = new BufferedReader(new InputStreamReader(mmSocket.getInputStream()));
+                            tmpOut = mmSocket.getOutputStream();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                            ex.printStackTrace(new PrintWriter(writer));
+                            stacktrace = writer.toString();
+                            mHandler.obtainMessage(UPDATE_DISPLAY,
+                                    "Exception2 with device:" + deviceToConnect.getName()
+                                            + " with MAC: " + deviceToConnect.getAddress()
+                                            + ", error: " + ex.getMessage() + "\nstacktrace:"+stacktrace).sendToTarget();
+
+                        }
+                        mmInStream = tmpIn;
+                        mmOutStream = tmpOut;
+                    }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             } catch (SQLiteNotInitialized e) {
                 e.printStackTrace();
+                Writer writer = new StringWriter();
+                e.printStackTrace(new PrintWriter(writer));
+                String stacktrace = writer.toString();
+                mHandler.obtainMessage(UPDATE_DISPLAY,
+                        "SQLiteNotInitialized with device:" + deviceToConnect.getName()
+                                + " with MAC: " + deviceToConnect.getAddress()
+                                + ", error: " + e.getMessage() + "\nstacktrace:"+stacktrace).sendToTarget();
             }
         }
 
